@@ -142,6 +142,7 @@
 
 <script>
   import axios from "axios";
+
 export default {
   data:() => ({
     dataDurgDetail : []
@@ -151,12 +152,14 @@ export default {
  
   },
   methods: {
+    
     async drugDetailById(){
       try {
           let drug_Code = await this.$route.params.id
           let drugDetailPath = await `/api/InterfaceBrowser/GetDrugsID?Drug_Code=${drug_Code}`
           let response = await axios.get(drugDetailPath);
           this.dataDurgDetail = await response.data[0];
+
       } catch (error) {
           console.error('Error fetching data:', error);
       }
@@ -171,7 +174,7 @@ export default {
     text-align: left;
   }
   .drug-detail .head1{
-    color: #2e3192;
+    color: #223E7E;
     font-size: 18px;
     font-weight: 600;
   }

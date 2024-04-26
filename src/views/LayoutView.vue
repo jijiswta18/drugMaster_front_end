@@ -16,15 +16,65 @@
               <i class="far fa-list-alt menu-icon"></i>
               <v-list-item-content>
                 <v-list-item-title class="menu-text">
-                  รายการยา
+                  Drug
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </router-link>
   
+          <router-link 
+            class="d-flex align-center menu-link"
+            active-class="activemenu"
+            :to="{ name: 'medicine-rules'}"
+          >
+            <v-list-item link>
+              <i class="far fa-list-alt menu-icon"></i>
+              <v-list-item-content>
+                <v-list-item-title class="menu-text">
+                  Medicine Rules
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
+
+          <router-link 
+            class="d-flex align-center menu-link"
+            active-class="activemenu"
+            :to="{ name: 'receive-rules'}"
+          >
+            <v-list-item link>
+              <i class="far fa-list-alt menu-icon"></i>
+              <v-list-item-content>
+                <v-list-item-title class="menu-text">
+                  Receive Rules
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
+
+          
+          <!-- <v-list-group no-action>
+            <template v-slot:activator >
+              <v-list-item-content >
+                <v-list-item-title>Receive Rules</v-list-item-title>
+              </v-list-item-content>
+            </template>
+  
+            <v-list-item
+              v-for="(becomeLO, i) in becomeLOs"
+              :key="i"
+              link
+            >
+              <v-list-item-title v-text="becomeLO[0]"></v-list-item-title>
+              <v-list-item-icon>
+                <v-icon v-text="becomeLO[1]"></v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list-group> -->
 
   
         </v-list>
+
   
       </v-navigation-drawer>
         <v-app-bar app class="navbar">
@@ -32,34 +82,8 @@
          
           <v-app-bar-nav-icon class="navbar-icon" @click="drawer = !drawer"></v-app-bar-nav-icon>
           <v-spacer></v-spacer>
-          <v-btn depressed rounded text @click="logout" ><i class="fas fa-sign-out-alt"></i> ออกจากระบบ </v-btn>
+          <v-btn depressed rounded text @click="logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ </v-btn>
 
-
-          <!-- <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-  
-              <div 
-                class="box-user mr-2"
-                v-bind="attrs"
-                v-on="on"
-              >
-                <i class="fa-solid fa-circle-user f-24"></i>
-              </div>
-        
-            </template>
-  
-            <v-list>
-
-  
-              <v-list-item >
-                <v-list-item-title>
-                  <v-btn depressed rounded text @click="logout"> <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> ออกจากระบบ </v-btn>
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-
-  
-          </v-menu> -->
         </div>
         </v-app-bar>
       <v-main class="main">
@@ -72,20 +96,32 @@
   </template>
 
   <script>
+  import store from '../store/index.js';
     export default {
       name: "MyHome",
       data: () => ({
           dialog: false,
           drawer: true,
+          submenu: null,
+          becomeLOs: [
+            ['Medicines'],
+            ['Medicines Rules'],
+          ],
       }),
       methods: {
-     
+        toggleSubMenu(item) {
+          if (this.submenu === item) {
+            this.submenu = null;
+          } else {
+            this.submenu = item;
+          }
+        },
         homeUser(){
           this.$router.push("/user/login");
         },
   
         async logout() {
-            // await this.$store.dispatch("logout");
+            await store.dispatch("logout");
          
             await this.$router.push("/");
 
@@ -102,7 +138,8 @@
       font-family: 'Prompt', sans-serif!important;
     }
     .sidebar{
-      background-image: url('@/assets/927756.jpg');
+      /* background-image: url('@/assets/927756.jpg'); */
+      background: #223E7E!important;
       padding: 0;
     }
     .head-menuhome{
@@ -123,7 +160,7 @@
   
     .navbar{
 
-      background-color: #2e3192!important;
+      background-color: #223E7E!important;
       border-bottom: 6px solid #f4742b!important;
       color: white!important;
     }
@@ -141,8 +178,7 @@
       background-color: #eef0f8;
 
     }
-    .activemenu,
-    .router-link-exact-active{
+    .router-link-exact-active.activemenu{
       background-color: #f4742b;
     
     }
@@ -175,19 +211,10 @@
       line-height: inherit!important;
       font-weight: 300!important;
     }
-    .style-page{
-      /* margin: 0 1rem; */
-      /* width: 100%;
-      max-width: 900px; */
-      /* padding: 1.5rem;
-      background-color: white;
-      border-radius: 15px; */
-      /* box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12)!important; */
-    } 
     .style-label{
       text-align: left;
       margin-bottom: 2px!important;
-      font-size: 14px;
+      font-size: 12px;
     }
     .style-label span{
       color: red;
@@ -206,13 +233,18 @@
     }
   
     .btn-cancel{
-      border: 1px solid #003366;
-      color: #003366;
+      border: 1px solid #223E7E;
+      color: #223E7E;
     }
-    .btn-submit{
-        border: 1px solid #003366;
-        background-color: #003366!important;
+    .btn-save{
+        border: 1px solid #223E7E;
+        background: #223E7E!important;
         color: white!important;
+
+    }
+    .btn-action{
+      color: #223E7E!important;
+
     }
     .ficon-24 {
       font-size: 24px;
@@ -231,8 +263,28 @@
       margin-bottom: 1rem;
     }
     .head-font{
-      color: #2e3192;
+      color: #223E7E;
       font-size: 30px;
     }
+    .btn-head{
+      padding: 1.25rem!important;
+    }
+    .btn-head span{
+      color: #223E7E;
+      font-size: 14px;
+    }
+    .btn-logout{
+      background: #f4742b;
 
+    }
+
+    .btn-logout span{
+
+      color: white;
+    }
+    .v-list-item--active{
+      background-color: #f4742b;
+      color: white!important;
+    }
+    
   </style>

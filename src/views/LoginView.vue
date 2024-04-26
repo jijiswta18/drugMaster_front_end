@@ -4,7 +4,7 @@
             <div class="box-logo mb-3">
                 <!-- <img src="@/assets/images/logo-cgd.png"/> -->
             </div>
-            <h2 class="mb-7">my-project</h2>
+            <h2 class="mb-7">Drug Master</h2>
             <v-form
                     ref="form"
                     class="form-login mt-2"
@@ -68,8 +68,10 @@
 <!--  -->
 <script>
 
-import axios from "axios";
+// import axios from "axios";
 import Swal from 'sweetalert2';
+import store  from '../store/index.js';
+
 
 export default {
 
@@ -101,19 +103,33 @@ export default {
 
             if( this.$refs.form.validate()){
                 try {
-                let encodedPassword   =   await this.encodeBase64(this.password);
 
-                let ldapPath = `/ldap/RestfulWS/username/${this.username}/password/${encodedPassword}`
+                const encodedPassword = this.encodeBase64(this.password);
+                console.log('Encoded Password:', encodedPassword);
+        
+
+                await store.dispatch('login',{
+                    username: this.username,
+                    password: encodedPassword
+                })
+
+  
+               
+                // let ldapPath = `/ldap/RestfulWS/username/${this.username}/password/${encodedPassword}`
                 
-                let response = await axios.get(ldapPath);
-                console.log(response.data);
+                // let response = await axios.get(ldapPath);
+                // await axios.get(ldapPath);
 
-
+                // if(response.data){
+                //     let userPath = `/api_phonebook/phonebook/employee_info/${this.username}`
                 
-                if (!response.data) { 
-                    throw new Error('Failed to fetch data');
-                }
+                //     let responseUser = await axios.get(userPath);
 
+                //     console.log(responseUser);
+                // }
+                
+           
+                await this.$router.push({name:"drug-all"});
                 await Swal.fire({
                     position: 'center',
                     icon: 'success',
@@ -121,7 +137,7 @@ export default {
                     showConfirmButton: false,
                     timer: 1000
                 })
-                await this.$router.push({name:"drug-all"});
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 await Swal.fire({

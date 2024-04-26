@@ -3,7 +3,7 @@ import App from './App.vue'
 import vuetify from './plugins/vuetify'
 import router from './router'
 import axios from 'axios'
-import store from './store'
+// import store from './store'
 import VueAxios from 'vue-axios'
 
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
@@ -32,6 +32,6 @@ axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 new Vue({
   vuetify,
   router,
-  store,
+  // store,
   render: h => h(App)
 }).$mount('#app')

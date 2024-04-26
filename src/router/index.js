@@ -1,11 +1,18 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-// import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import DrugAll from '../views/drug/DrugAll.vue'
-import DrugDetail from '../views/drug/DrugDetail.vue'
+import store from '../store/index.js'
+// import store from '@/store'
 
+import LoginView from '../views/LoginView.vue'
 import LayoutView from '../views/LayoutView.vue'
+import PageNotFound from '../views/NotFound.vue'
+
+import DrugAll from '../views/drug/DrugAll.vue'
+import DrugById from '../views/drug/drugDetail/DrugById.vue'
+import MedicineRules from '../views/medicine/MedicineRules.vue'
+import ReceiveRules from '../views/receive/ReceiveRules.vue'
+
+
 
 
 Vue.use(VueRouter)
@@ -13,94 +20,61 @@ Vue.use(VueRouter)
 const routes = [
 
     {
-    path: '/',
-    name: 'login',
-    component: LoginView
-  },
+      path: '/',
+      name: 'login',
+      component: LoginView
+    },
 
   { 
     path: '/drug',
     component: LayoutView,
-    // beforeEnter (to, from, next) {
-      
-      // store.dispatch('checkLogin')
-      // if(store.state.user && store.state.user.roles == 'user'){
-      //   next()      
-      // }else{
-      //   // console.log('==========');
-      //   // next('/user/login')
-      //   next({ name: 'userLogin' })
-      // }
+ 
+    beforeEnter (to, from, next) {
 
-      children: [
-        {
-          path: '/drug',
-          name: 'drug-all',
-          component: DrugAll
-        },
-        {
-          path: '/drug/:id',
-          name: 'drug-detail',
-          component: DrugDetail
-        },
-      ]
+      store.dispatch('checkLogin')
+      if(store.state.user === true){
+        next()  
+      }else{
+        next({ name: 'login' })
+      }
+
     },
-  
 
-  // {
-  //   path: '/layout',
-  //   name: 'layout',
-  //   component: LayoutView,
-  //   children: [
-  //     {
-  //       path: '/drug',
-  //       name: 'drug-all',
-  //       component: DrugAll
-  //     },
-  //     {
-  //       path: '/drug/:id',
-  //       name: 'drug-detail',
-  //       component: DrugDetail
-  //     },
-  //   ]
-  // },
+    children: [
+   
+      {
+        path: '/drug/',
+        name: 'drug-all',
+        component: DrugAll
+      },
+      {
+        path: '/drug/:id',
+        name: 'drug-detail',
+        component: DrugById
+      },
+      
+      {
+        path: '/medicine/',
+        name: 'medicine-rules',
+        component: MedicineRules
+      },
 
-  
-  // {
-  //   path: '/',
-  //   name: 'login',
-  //   component: LoginView
-  // },
-  
-  // {
-  //   path: '/drug',
-  //   name: 'drug-all',
-  //   component: DrugAll
-  // },
-  // {
-  //   path: '/drug/:id',
-  //   name: 'drug-detail',
-  //   component: DrugDetail
-  // },
+      {
+        path: '/receive/',
+        name: 'receive-rules',
+        component: ReceiveRules
+      },
+    ]
+  },
 
-  // {
-  //   path: '/home',
-  //   name: 'home',
-  //   component: HomeView
-  // },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: PageNotFound },
+
 ]
+
 
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
+  // base: process.env.BASE_URL,
   routes
 })
 
