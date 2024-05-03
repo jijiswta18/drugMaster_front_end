@@ -11,6 +11,7 @@ import '@fortawesome/fontawesome-free/css/all.css'
 import '@mdi/font/css/materialdesignicons.min.css'
 
 
+
 Vue.use(router)
 Vue.use(VueAxios, axios)
 

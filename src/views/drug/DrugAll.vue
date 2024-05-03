@@ -1,5 +1,4 @@
 <template>
-
   <div class="drug-all">
     <div class="top-head">
       <label class="head-font">Drugs</label>
@@ -33,28 +32,20 @@
 
       <!-- Table -->
     <v-card class="style-card">
+   
       <v-data-table
           :headers="headers"
           :items="filteredItems"
           :search="search"
           :loading="loading"
           loading-text="Loading... Please wait"
+          :footer-props="{ 'items-per-page-options': [10, 20, 30, 100] }"
 
       >
-        <template v-slot:[`item.create_Date`]="{ item }">{{ getThaiDate(item.Create_Date )}}</template>
+        <template v-slot:[`item.Create_Date`]="{ item }">{{ getThaiDate(item.Create_Date )}}</template>
         <template v-slot:[`item.action`]="{ item }">
           <v-col cols="auto">
-            <router-link
-              :to="{ name: 'drug-detail', params: { id: item.Drug_Code } }"
-              class="btn btn-warning removeUnderline"
-            >
-            <v-btn color="#f4742b" small class="btn-action"><i class="fas fa-search"></i></v-btn>
-            
-          
-          </router-link>
-
           <v-btn color="#f4742b" small class="btn-action" @click="dialogUpadateDrugs(item)"><i class="fas fa-edit"></i></v-btn>
-
           </v-col>
         
         </template>
@@ -118,10 +109,9 @@
 
                           <!-- input Drug_GenericName -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>Drug_GenericName</p>
+                              <p class="style-label">Drug_GenericName</p>
                               <v-text-field
                                   v-model="dataFrom.Drug_GenericName"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="Drug_GenericName"
                                   dense
                                   outlined
@@ -132,10 +122,9 @@
 
                           <!-- input Drug_TradeName -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>Drug_TradeName</p>
+                              <p class="style-label">Drug_TradeName</p>
                               <v-text-field
                                   v-model="dataFrom.Drug_TradeName"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="Drug_TradeName"
                                   dense
                                   outlined
@@ -174,10 +163,9 @@
 
                             <!-- input GPU_Code -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>GPU_Code</p>
+                              <p class="style-label">GPU_Code</p>
                               <v-text-field
                                   v-model="dataFrom.GPU_Code"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="GPU_Code"
                                   dense
                                   outlined
@@ -188,10 +176,9 @@
 
                             <!-- input Claim_Desc -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>Claim_Desc</p>
+                              <p class="style-label">Claim_Desc</p>
                               <v-text-field
                                   v-model="dataFrom.Claim_Desc"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="Claim_Desc"
                                   dense
                                   outlined
@@ -216,10 +203,9 @@
 
                             <!-- input SIMB -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>SIMB</p>
+                              <p class="style-label">SIMB</p>
                               <v-text-field
                                   v-model="dataFrom.SIMB"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="SIMB"
                                   dense
                                   outlined
@@ -230,10 +216,9 @@
 
                             <!-- input ClaimCat -->
                           <v-col cols="12" md="6" class="py-0">
-                              <p class="style-label"><span>*</span>ClaimCat</p>
+                              <p class="style-label">ClaimCat</p>
                               <v-text-field
                                   v-model="dataFrom.ClaimCat"
-                                  :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                   label="ClaimCat"
                                   dense
                                   outlined
@@ -264,6 +249,8 @@
   import axios from "axios";
   import * as XLSX from 'xlsx';
   import DatePicker from '@/components/DatePicker.vue';
+  import moment from 'moment';
+  import 'moment/locale/th'; // Import the Thai locale
   export default {
     components: {DatePicker},
     data : () => ({
@@ -271,29 +258,29 @@
       loading: true,
       headers: [
         {
-          text: 'รหัสยา',
+          text: 'Code',
           align: 'left',
           value: 'Drug_Code',
         },
         {
-          text: 'ชื่อยา (ภาษาไทย)',
+          text: 'Drug_ThaiName',
           align: 'start',
           sortable: false,
           value: 'Drug_ThaiName',
         },
         {
-          text: 'ชื่อยา (ภาษาอังกฤษ)',
+          text: 'Drug_EnglishName',
           align: 'start',
           sortable: false,
           value: 'Drug_EnglishName',
         },
         {
-          text: 'ประเภทยา',
+          text: 'Drug_Catagory',
           align: 'start',
           sortable: false,
           value: 'Drug_Catagory',
         },
-        { text: 'วันที่สร้าง', value: 'create_Date' },
+        { text: 'Create_Date', value: 'Create_Date' },
         {
           text: 'Action',
           align: 'center',
@@ -307,6 +294,7 @@
       dialogDrugs :false,
       dataFrom: {},
       catDrugs: -1,
+      Drug_Code: {}
  
     }), 
     mounted(){
@@ -316,9 +304,14 @@
     computed: {
       filteredItems() {
         return this.dataDurgList.filter(item => {
-          const itemDate = item.create_Date;
+          const itemDate = item.Create_Date;
           const startDate = this.getStartDate;
           const endDate = this.getEndDate;
+          
+          // console.log(this.dataDurgList);
+          // console.log(startDate);
+          // console.log(endDate);
+
           return (
             (startDate === null || itemDate >= startDate) &&
             (endDate === null || itemDate <= endDate)
@@ -331,6 +324,7 @@
    
     },
     methods: {
+
 
       getThaiDate(item){
         if (item){
@@ -365,11 +359,10 @@
         this.$refs.formDrugs.resetValidation()
       },
 
-      dialogUpadateDrugs(value){
-          console.log(value);
-          this.dataFrom           = value
-          this.dialogDrugs        = true
-          this.catDrugs           = 0
+      async dialogUpadateDrugs(value){
+          this.catDrugs           = await 0
+          this.dialogDrugs        = await true
+          this.dataFrom           = await JSON.parse(JSON.stringify(value));
       },
 
       async getListDrugAll(){
@@ -378,6 +371,7 @@
             let drugAllPath = '/api/InterfaceBrowser/GetDrugs'
             let response = await axios.get(drugAllPath);
             this.dataDurgList = await response.data;
+            
             this.loading = await false
         } catch (error) {
             this.loading = await false
@@ -387,7 +381,66 @@
       },
 
       async saveDrugs(){
-        '=================='
+        try {
+          if(this.$refs.formDrugs.validate()){
+            let fd = null
+            let drugPath = null
+            if(this.catDrugs === -1){
+              // create
+              fd = await{
+                "drug_Code" : this.dataFrom.Drug_Code,
+                "drug_EnglishName": this.dataFrom.Drug_EnglishName,
+                "drug_ThaiName": this.dataFrom.Drug_ThaiName,
+                "drug_GenericName": this.dataFrom.Drug_GenericName,
+                "drug_TradeName": this.dataFrom.Drug_TradeName,
+                "drug_Catagory": this.dataFrom.Drug_Catagory,
+                "tpU_Code": this.dataFrom.TPU_Code,
+                "gpU_Code": this.dataFrom.GPU_Code,
+                "claim_Desc": this.dataFrom.Claim_Desc,
+                "group_Bill": this.dataFrom.Group_Bill,
+                "simb": this.dataFrom.SIMB,
+                "claimCat": this.dataFrom.ClaimCat,
+                "create_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
+                "create_By": this.dataFrom.create_By,
+                "cxl_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
+                "cxl_By": this.dataFrom.cxl_By,
+                "update_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
+                "update_By": this.dataFrom.update_By,
+                "stockInactiveCode": this.dataFrom.stockInactiveCode,
+              }
+              drugPath = await `/api/InterfaceBrowser/CreateDrugMaster`
+            }else{
+              fd = await{
+                "drug_Code" : this.dataFrom.Drug_Code,
+                "drug_EnglishName": this.dataFrom.Drug_EnglishName,
+                "drug_ThaiName": this.dataFrom.Drug_ThaiName,
+                "drug_GenericName": this.dataFrom.Drug_GenericName,
+                "drug_TradeName": this.dataFrom.Drug_TradeName,
+                "drug_Catagory": this.dataFrom.Drug_Catagory,
+                "tpU_Code": this.dataFrom.TPU_Code,
+                "gpU_Code": this.dataFrom.GPU_Code,
+                "claim_Desc": this.dataFrom.Claim_Desc,
+                "group_Bill": this.dataFrom.Group_Bill,
+                "simb": this.dataFrom.SIMB,
+                "claimCat": this.dataFrom.ClaimCat,
+                "cxl_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
+                "cxl_By": this.dataFrom.cxl_By,
+                "update_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
+                "update_By": this.dataFrom.update_By,
+                "stockInactiveCode": this.dataFrom.stockInactiveCode,
+              }
+            }
+
+            let response = await axios.post(`${drugPath}`, fd)
+
+
+            
+            console.log(response);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      
       }
 
 
@@ -421,8 +474,6 @@
   .dialog-title span{
     color: white
   }
-
-
 
 
 </style>

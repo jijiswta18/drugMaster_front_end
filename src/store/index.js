@@ -27,6 +27,7 @@ const getDefaultState = () => {
        
     },
     mutations: {
+
         authUser (state, data) {
             state.user = data
             console.log(state.user);
@@ -47,17 +48,19 @@ const getDefaultState = () => {
   
       async login ( {commit}, authData){
   
-        let ldapPath = `/ldap/RestfulWS/username/${authData.username}/password/${authData.password}`
+        // let ldapPath = `/ldap/RestfulWS/username/${authData.username}/password/${authData.password}`
                 
-        let response = await axios.get(ldapPath);
-
-        console.log(response);
+        // let response = await axios.get(ldapPath);
+  
+        let adPath = `/active_directory/login`
+                
+        let response = await axios.post(adPath, authData);
 
         const expirationTime = await 1000 * 60 * 60; // 1 hour
   
         const now = await Date.now();
   
-        commit('authUser', response.data)
+        commit('authUser', response.data.result)
 
         commit('setSessionTimeout',  now + expirationTime)
 

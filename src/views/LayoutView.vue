@@ -1,11 +1,11 @@
 <template>
-    <v-app id="inspire">
+    <v-app id="app">
       <v-navigation-drawer class="sidebar" v-model="drawer" app>
         <v-list-item >
           <v-list-item-content class="head-menuhome">
           </v-list-item-content>
         </v-list-item>
-  
+
         <v-list class="mt-5" dense nav>  
           <router-link 
             class="d-flex align-center menu-link"
@@ -37,40 +37,6 @@
             </v-list-item>
           </router-link>
 
-          <router-link 
-            class="d-flex align-center menu-link"
-            active-class="activemenu"
-            :to="{ name: 'receive-rules'}"
-          >
-            <v-list-item link>
-              <i class="far fa-list-alt menu-icon"></i>
-              <v-list-item-content>
-                <v-list-item-title class="menu-text">
-                  Receive Rules
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </router-link>
-
-          
-          <!-- <v-list-group no-action>
-            <template v-slot:activator >
-              <v-list-item-content >
-                <v-list-item-title>Receive Rules</v-list-item-title>
-              </v-list-item-content>
-            </template>
-  
-            <v-list-item
-              v-for="(becomeLO, i) in becomeLOs"
-              :key="i"
-              link
-            >
-              <v-list-item-title v-text="becomeLO[0]"></v-list-item-title>
-              <v-list-item-icon>
-                <v-icon v-text="becomeLO[1]"></v-icon>
-              </v-list-item-icon>
-            </v-list-item>
-          </v-list-group> -->
 
   
         </v-list>
@@ -81,7 +47,9 @@
           <div class="style-navbar">
          
           <v-app-bar-nav-icon class="navbar-icon" @click="drawer = !drawer"></v-app-bar-nav-icon>
+        
           <v-spacer></v-spacer>
+          <p class="mb-0 mr-2">{{ user.full_name }}</p>
           <v-btn depressed rounded text @click="logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ </v-btn>
 
         </div>
@@ -103,6 +71,7 @@
           dialog: false,
           drawer: true,
           submenu: null,
+          user: store.getters.user,
           becomeLOs: [
             ['Medicines'],
             ['Medicines Rules'],
@@ -131,12 +100,43 @@
   }
   </script>
   <style>
+   
+    @font-face {
+      font-family: "chulabhornlikittext";
+      src: url("@/assets/fonts/Chulabhorn_Likit/chulabhornlikittext-light.woff") format("woff");
+      font-weight: 200;
+    }
+
+    @font-face {
+      font-family: "chulabhornlikittext";
+      src: url("@/assets/fonts/Chulabhorn_Likit/chulabhornlikittext-regular.woff") format("woff");
+      font-weight: 500;
+    }
+
+    @font-face {
+      font-family: "chulabhornlikittext";
+      src: url("@/assets/fonts/Chulabhorn_Likit/chulabhornlikittext-medium.woff") format("woff");
+      font-weight: 400;
+    }
+
+    @font-face {
+      font-family: "chulabhornlikittext";
+      src: url("@/assets/fonts/Chulabhorn_Likit/chulabhornlikittext-bold.woff") format("woff");
+      font-weight: 700;
+    }
+
+
+
+    #app {
+      font-size: 18px;
+      font-family: 'chulabhornlikittext', sans-serif;
+    }
+
+
     .container-page{
       padding: 1rem;
     }
-    .v-application{
-      font-family: 'Prompt', sans-serif!important;
-    }
+
     .sidebar{
       /* background-image: url('@/assets/927756.jpg'); */
       background: #223E7E!important;
@@ -282,9 +282,9 @@
 
       color: white;
     }
-    .v-list-item--active{
+    /* .v-list-item--active{
       background-color: #f4742b;
       color: white!important;
-    }
+    } */
     
   </style>

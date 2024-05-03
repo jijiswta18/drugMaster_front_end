@@ -38,6 +38,7 @@
                         :search="search"
                         :loading="loading"
                         loading-text="Loading... Please wait"
+                        :footer-props="{ 'items-per-page-options': [10, 20, 30, 100] }"
 
                     >
                         <template v-slot:[`item.action`]="{ item }">
@@ -205,7 +206,7 @@
             dialogReceiveRule: false,
             dataFrom:{},
             catReceiveRule: -1,
-            selectCode: [{ value: 'ยาสำรองจ่ายข้าราชการ', id: "ยาสำรองจ่ายข้าราชการ" }], 
+            selectCode: [], 
             selectAdditionCode: [{ value: 'MEDICINE', id: "MEDICINE" }, { value: 'ACTIVITY', id: "ACTIVITY" }], 
             numberRule: v  => {
                 if (!isNaN(parseFloat(v)) && v >= 0) return true;
@@ -242,10 +243,11 @@
         async getSelectcodeRule(){
             let codeRulePath    = '/api/MedicineRules/GetcodeRule'
             let response        = await axios.get(codeRulePath)
+
             await response.data.forEach(async item => {
                 await this.selectCode.push({'id':item.Code, 'value':item.Code})
             })
-            console.log(response);
+
         },
         async getMedicineAll(){
             try {
@@ -413,11 +415,11 @@
             
             }
         },
-        dialogUpadateReceiveRule(value){
-            console.log(value);
-            this.dataFrom           = value
-            this.dialogReceiveRule  = true
-            this.catReceiveRule     = 0
+        async dialogUpadateReceiveRule(value){
+            this.dataFrom           =  await JSON.parse(JSON.stringify(value));
+            this.getSelectcodeRule()
+            this.dialogReceiveRule  =  true
+            this.catReceiveRule     =  0
         },
         dialogCreateReceiveRule(){
             this.getSelectcodeRule()

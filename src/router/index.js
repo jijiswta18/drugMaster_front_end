@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store/index.js'
-// import store from '@/store'
+
 
 import LoginView from '../views/LoginView.vue'
 import LayoutView from '../views/LayoutView.vue'
@@ -32,18 +32,28 @@ const routes = [
     beforeEnter (to, from, next) {
 
       store.dispatch('checkLogin')
-      if(store.state.user === true){
+      if(store.state.user){
         next()  
       }else{
         next({ name: 'login' })
       }
 
     },
+    // beforeEnter (to, from, next) {
+
+    //   store.dispatch('checkLogin')
+    //   if(store.state.user === true){
+    //     next()  
+    //   }else{
+    //     next({ name: 'login' })
+    //   }
+
+    // },
 
     children: [
    
       {
-        path: '/drug/',
+        path: '/drug',
         name: 'drug-all',
         component: DrugAll
       },

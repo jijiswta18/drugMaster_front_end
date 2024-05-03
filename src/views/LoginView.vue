@@ -104,16 +104,14 @@ export default {
             if( this.$refs.form.validate()){
                 try {
 
-                const encodedPassword = this.encodeBase64(this.password);
-                console.log('Encoded Password:', encodedPassword);
+                // const encodedPassword = this.encodeBase64(this.password);
+                // console.log('Encoded Password:', encodedPassword);
         
 
                 await store.dispatch('login',{
-                    username: this.username,
-                    password: encodedPassword
-                })
-
-  
+                        username: this.username,
+                        password: this.password,
+                    })
                
                 // let ldapPath = `/ldap/RestfulWS/username/${this.username}/password/${encodedPassword}`
                 
