@@ -1,93 +1,112 @@
-
-import Vue from 'vue'
-import Vuex from 'vuex'
-import axios from 'axios'
-import VuexPersistence from 'vuex-persist'
-
-Vue.use(Vuex)
+import Vue from 'vue';
+import Vuex from 'vuex';
+import axios from 'axios';
+import VuexPersistence from 'vuex-persist';
+// import { isSessionExpired } from '@/utils'; 
+Vue.use(Vuex);
 
 const getDefaultState = () => {
-    return {
-      user: null,
-      sessionTimeout: null,
-    }
+  return {
+    user: null,
+    checkUser: null,
+    isLoggedIn: !!localStorage.getItem('isLoggedIn'),
+    expiryDate: null,
+    // loginExpiryDate: null,
+    // timeoutId: null
   }
-  
-  export default new Vuex.Store({
-  
-    plugins: [new VuexPersistence().plugin],
-    state: getDefaultState(),
-    getters: {
-      user (state) {
-        return state.user
-      },
-      sessionTimeout(state){
-          return state.sessionTimeout
-      },
-       
+}
+
+const store = new Vuex.Store({
+  plugins: [new VuexPersistence().plugin],
+  state: getDefaultState(),
+
+  getters: {
+    user (state) {
+      return state.user
     },
-    mutations: {
+    checkUser (state) {
+      return state.checkUser
+    },
+    isLoggedIn(state){
+      return state.isLoggedIn
+    },
+    expiryDate(state){
+      return state.expiryDate
+    },
 
-        authUser (state, data) {
-            state.user = data
-            console.log(state.user);
-        },
 
-        setSessionTimeout(state, timeout) {
-            state.sessionTimeout = timeout
-        },
-        
-        clearAuthUser (state){
-          state.user = null
-          state.sessionTimeout = null
-          localStorage.removeItem('expirationDate')
+  },
+  mutations: {
+    setUser(state, data) {
+      state.user = data;
+      state.isLoggedIn = true;
+      localStorage.setItem('isLoggedIn', true); // Set isLoggedIn in localStorage
+   
     
-        }
     },
-    actions: {
-  
-      async login ( {commit}, authData){
-  
-        // let ldapPath = `/ldap/RestfulWS/username/${authData.username}/password/${authData.password}`
-                
-        // let response = await axios.get(ldapPath);
-  
+    
+    checkUser (state, data) {
+        state.checkUser = data
+     
+    },
+    checkExpiryDate (state, expiryDate) {
+      state.expiryDate = expiryDate;
+     
+    },
+    clearUser(state) {
+      state.user = null;
+      state.checkUser = null;
+      state.isLoggedIn = false;
+      localStorage.removeItem('isLoggedIn'); // Clear isLoggedIn from localStorage
+      state.expiryDate = null
+    },
+
+
+  },
+  actions: {
+    async login({ commit }, authData) {
+
         let adPath = `/active_directory/login`
-                
+              
         let response = await axios.post(adPath, authData);
 
-        const expirationTime = await 1000 * 60 * 60; // 1 hour
-  
-        const now = await Date.now();
-  
-        commit('authUser', response.data.result)
+        if(response.data.code === "200"){
+            const user = response.data.result
+            commit('checkUser', "200");
+            commit('setUser', user);
 
-        commit('setSessionTimeout',  now + expirationTime)
+            const expiryDate = new Date().getTime() + (60 * 60 * 1000); // 5 minutes from now
+            commit('checkExpiryDate', expiryDate);
+            localStorage.setItem('loginExpiryDate', expiryDate); // Save expiry date in local storage
 
-       
-        localStorage.setItem("expirationDate", now + expirationTime);
+            // const  user = response.data.result;
+            // commit('setUser', user);
 
-      },
-
-      checkLogin({ commit }){
-
-        const expiration = localStorage.getItem('expirationDate');
-  
-        if(expiration < Date.now()){
-          console.log('expire','now')
-          commit('clearAuthUser')
-          return
+        }else{
+            commit('checkUser', "204");
+            commit('setUser', null);
         }
-  
-      },
-
-      async logout({commit}){
-        commit('clearAuthUser')
-      },
-   
-  
+ 
     },
-    modules: {
-    }
-  })
-  
+
+    logout({ commit }) {
+      commit('clearUser'); // Clear user state on logout
+    },
+
+    checkLogin({ commit }) {
+
+      const expiryDate = localStorage.getItem('loginExpiryDate');
+      if (expiryDate && parseInt(expiryDate) > new Date().getTime()) {
+        commit('checkExpiryDate', expiryDate);
+      } else {
+
+        commit('clearUser');
+        localStorage.removeItem('loginExpiryDate');
+      }
+    },
+  },
+
+});
+
+
+export default store;

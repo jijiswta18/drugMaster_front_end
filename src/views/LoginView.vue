@@ -2,9 +2,8 @@
     <div class="page-login">
         <div class="box-login">
             <div class="box-logo mb-3">
-                <!-- <img src="@/assets/images/logo-cgd.png"/> -->
             </div>
-            <h2 class="mb-7">Drug Master</h2>
+            <h2 class="mb-7">Mapping Interface</h2>
             <v-form
                     ref="form"
                     class="form-login mt-2"
@@ -53,9 +52,9 @@
                             >เข้าสู่ระบบ</v-btn>
                         </v-col>
                     </v-row>
-                    <v-row no-gutters class="mt-2">
+                    <v-row no-gutters class="mt-7">
                         <v-col>
-                            <a class="forgot-password mt-2" href="https://passwordreset.microsoftonline.com/">Forgot your password?</a>
+                            <a class="forgot-password" href="https://passwordreset.microsoftonline.com/">Forgot your password?</a>
                         </v-col>
                     </v-row>
                  
@@ -69,7 +68,7 @@
 <script>
 
 // import axios from "axios";
-import Swal from 'sweetalert2';
+// import Swal from 'sweetalert2';
 import store  from '../store/index.js';
 
 
@@ -92,8 +91,9 @@ export default {
         passwordRules: [
             v => !!v || 'กรุณากรอกข้อมูล',
         ],
-        }),
-        computed: {},
+        user: store.getters
+    }),
+    computed: {},
     methods: {
         encodeBase64(str) {
            return btoa(str);
@@ -102,51 +102,51 @@ export default {
         async login(){
 
             if( this.$refs.form.validate()){
+
                 try {
-
-                // const encodedPassword = this.encodeBase64(this.password);
-                // console.log('Encoded Password:', encodedPassword);
-        
-
-                await store.dispatch('login',{
+                    await store.dispatch('login',{
                         username: this.username,
                         password: this.password,
                     })
-               
-                // let ldapPath = `/ldap/RestfulWS/username/${this.username}/password/${encodedPassword}`
-                
-                // let response = await axios.get(ldapPath);
-                // await axios.get(ldapPath);
 
-                // if(response.data){
-                //     let userPath = `/api_phonebook/phonebook/employee_info/${this.username}`
-                
-                //     let responseUser = await axios.get(userPath);
+                    if(this.user.checkUser === "204")
+                        {
+                            await this.$swal.fire({
+                            title: 'Error!',
+                            text: 'รหัสผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+                            icon: 'error',
+                            confirmButtonText: 'Ok'
+                        })
+                    }
+                    else{
+                        this.$router.push({name: 'drug-all'});
+                        // location.reload();
+                        await this.$swal.fire({
+                            position: 'center',
+                            title: 'เข้าสู่ระบบสำเร็จ',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1000
+                        })
 
-                //     console.log(responseUser);
-                // }
-                
-           
-                await this.$router.push({name:"drug-all"});
-                await Swal.fire({
-                    position: 'center',
-                    icon: 'success',
-                    title: 'เข้าสู่ระบบสำเร็จ',
-                    showConfirmButton: false,
-                    timer: 1000
-                })
+                        // const expiryDate = new Date().getTime() + (60 * 60 * 1000);
+                       
+                        // store.dispatch('setLoginExpiry', expiryDate);
 
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                await Swal.fire({
-                    title: 'Error!',
-                    text: 'รหัสผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
-                    icon: 'error',
-                    confirmButtonText: 'Ok'
-                })
+                        
+                    }
+
+
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    await this.$swal.fire({
+                        title: 'Error!',
+                        text: 'รหัสผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    })
+                }
             }
-            }
-
           
         }
     },
@@ -162,6 +162,8 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        background-image: url('../assets/927756.jpg');
+        text-align: center;
     }
     .box-login{
         margin: 0 1rem;
@@ -181,8 +183,12 @@ export default {
     .btn-login{
         background-color: rgb(46 49 146)!important;
         color: white;
+        padding: 0.25rem!important;
+        width: 100%;
+        height: auto!important;
+        font-size: 18px!important;
     }
-   
+
   
     .style-input-login ::v-deep  .v-input__slot{
         background: transparent;

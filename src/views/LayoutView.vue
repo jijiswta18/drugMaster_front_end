@@ -49,6 +49,7 @@
           <v-app-bar-nav-icon class="navbar-icon" @click="drawer = !drawer"></v-app-bar-nav-icon>
         
           <v-spacer></v-spacer>
+         
           <p class="mb-0 mr-2">{{ user.full_name }}</p>
           <v-btn depressed rounded text @click="logout" class="btn-logout"><i class="fas fa-sign-out-alt"></i> ออกจากระบบ </v-btn>
 
@@ -77,6 +78,7 @@
             ['Medicines Rules'],
           ],
       }),
+     
       methods: {
         toggleSubMenu(item) {
           if (this.submenu === item) {
@@ -90,10 +92,25 @@
         },
   
         async logout() {
-            await store.dispatch("logout");
-         
-            await this.$router.push("/");
+          this.$swal.fire({
+            icon: "warning",
+            title: "คุณต้องการออกจากระบบ",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: "ยืนยัน",
+            cancelButtonText: `ยกเลิก`
+          }).then(async (result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+              await store.dispatch("logout");
 
+              await this.$router.push("/login");
+              // await location.reload();
+
+            } else if (result.isDenied) {
+              this.$swal.fire("Changes are not saved", "", "info");
+            }
+          });
         }
       },
     
@@ -278,6 +295,10 @@
 
     }
 
+    .color-white{
+      color: white;
+    }
+
     .btn-logout span{
 
       color: white;
@@ -286,5 +307,46 @@
       background-color: #f4742b;
       color: white!important;
     } */
-    
+       /* custom sweetAlert */
+    div:where(.swal2-container) div:where(.swal2-popup) {
+      font-family:'chulabhornlikittext', sans-serif !important;
+      font-display: block;
+    }
+    table{
+     /* display: block; */
+     overflow-x: auto;
+     white-space: nowrap;
+   }
+    .style-table td{
+        border: 1px solid #D9D9D9;
+    }
+   ::-webkit-scrollbar {
+      width: 4px;
+      height: 6px;
+      border: 1px solid #D9D9D9;
+    }
+  
+    ::-webkit-scrollbar-track {
+      border-radius: 0;
+      background: #eeeeee;
+    }
+  
+    ::-webkit-scrollbar-thumb {
+      border-radius: 0;
+      background: #D9D9D9;
+    }
+    .head-toolbar{
+      box-shadow: none;
+      background: #f4742b!important;
+      color: white;
+    }
+   
+    .head-toolbar .toolbar-icon{
+      font-size: 24px;
+      color: white;
+    }
+   
+  
+
+ 
   </style>

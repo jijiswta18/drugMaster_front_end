@@ -399,7 +399,7 @@
                         "SelectionHospitalTypeOfActivity0"  : 0,
                         "SelectionHospitalTypeOfActivity1"  : 0,
                         "SelectionHospitalTypeOfActivity2"  : 0,
-                        "SelectionHospitalTypeOfActivity3"  : 0,
+                        "ionHospitalTypeOfActivity3"  : 0,
                         "xxxxxxxMaxAmtIpd"                  : 0.0,
                         "CreateDateTime"                    : "2024-04-24T09:12:54.313",
                         "CreateByUserID"                    : "806032",

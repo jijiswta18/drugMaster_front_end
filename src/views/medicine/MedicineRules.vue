@@ -39,11 +39,12 @@
                         :loading="loading"
                         loading-text="Loading... Please wait"
                         :footer-props="{ 'items-per-page-options': [10, 20, 30, 100] }"
+                        class="style-table"
 
                     >
                         <template v-slot:[`item.action`]="{ item }">
                             <v-col cols="auto">
-                                <v-btn color="#f4742b" small class="btn-action" @click="dialogUpadateReceiveRule(item)"><i class="fas fa-edit"></i></v-btn>
+                                <v-btn color="#f4742b" small class="btn-action" @click="dialogUpadateReceiveRule(item)"><i class="fas fa-edit f-16"></i></v-btn>
                             </v-col>
                         </template>
                     </v-data-table>
@@ -55,127 +56,134 @@
         <v-dialog v-model="dialogReceiveRule" persistent max-width="700px">
             <v-form ref="formReceiveRule" validate-on="submit lazy" @submit.prevent="saveReceiveRule">
                 <v-card>
-                    <v-card-title class="dialog-title mb-3">
-                        <span class="text-h5">{{ TitleReceiveRule }}</span>
-                    </v-card-title>
-                    <v-card-text class="pa-0">
-                        <v-container>
-                            <v-row>
-                                <!-- input SelectionStockCode0 -->
-                                <v-col cols="12" class="py-0">
-                                    <p class="style-label"><span>*</span>SelectionStockCode0</p>
-                                    <v-text-field
-                                        v-model="dataFrom.SelectionStockCode0"
-                                        :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                                        label="SelectionStockCode0"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                    ></v-text-field>
-                                </v-col>
+                    <v-toolbar class="head-toolbar">
+                        <v-toolbar-title class="color-white">{{ TitleReceiveRule }}</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon @click="dialogReceiveRule = false">
+                            <i class="far fa-window-close toolbar-icon"></i>
+                        </v-btn>
+                    </v-toolbar>
+                  
+                    <!-- <v-card-text class="pa-0"> -->
+                    <v-container>
+                        <v-row>
+                            <!-- input SelectionStockCode0 -->
+                            <v-col cols="12" class="py-0">
+                                <p class="style-label"><span>*</span>SelectionStockCode0</p>
+                                <v-text-field
+                                    v-model="dataFrom.SelectionStockCode0"
+                                    :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
+                                    label="SelectionStockCode0"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                ></v-text-field>
+                            </v-col>
 
-                                <!-- input EnglishName -->
-                                <v-col cols="12" class="py-0">
-                                    <p class="style-label"><span>*</span>EnglishName</p>
-                                    <v-text-field
-                                        v-model="dataFrom.EnglishName"
-                                        :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                                        label="EnglishName"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                    ></v-text-field>
-                                </v-col>
+                            <!-- input EnglishName -->
+                            <v-col cols="12" class="py-0">
+                                <p class="style-label"><span>*</span>EnglishName</p>
+                                <v-text-field
+                                    v-model="dataFrom.EnglishName"
+                                    :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
+                                    label="EnglishName"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                ></v-text-field>
+                            </v-col>
 
-                                <!-- input LocalName -->
-                                <v-col cols="12" class="py-0">
-                                    <p class="style-label"><span>*</span>LocalName</p>
-                                    <v-text-field
-                                        v-model="dataFrom.LocalName"
-                                        :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
-                                        label="LocalName"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                    ></v-text-field>
-                                </v-col>
+                            <!-- input LocalName -->
+                            <v-col cols="12" class="py-0">
+                                <p class="style-label"><span>*</span>LocalName</p>
+                                <v-text-field
+                                    v-model="dataFrom.LocalName"
+                                    :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
+                                    label="LocalName"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                ></v-text-field>
+                            </v-col>
 
-                                 <!-- select Code -->
-                                <v-col cols="12" md="6" class="py-0">
-                                    <p class="style-label"><span>*</span>Code</p>
-                                    <v-autocomplete
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                        label="เลือกรายการ"
-                                        item-text="value"
-                                        item-value="id"
-                                        v-model="dataFrom.Code"
-                                        :items="selectCode"
-                                        :rules="[v => !!v || 'กรุณาเลือกรายการ']"
-                                        
-                                        ></v-autocomplete>
-                                </v-col>
+                                <!-- select Code -->
+                            <v-col cols="12" md="6" class="py-0">
+                                <p class="style-label"><span>*</span>Code</p>
+                                <v-autocomplete
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                    label="เลือกรายการ"
+                                    item-text="value"
+                                    item-value="id"
+                                    v-model="dataFrom.Code"
+                                    :items="selectCode"
+                                    :rules="[v => !!v || 'กรุณาเลือกรายการ']"
+                                    
+                                    ></v-autocomplete>
+                            </v-col>
 
-                                <!-- select AdditionCode -->
-                                <v-col cols="12" md="6" class="py-0">
-                                    <p class="style-label"><span>*</span>AdditionCode</p>
-                                    <v-select
-                                        v-model="dataFrom.AdditionCode"
-                                        :items="selectAdditionCode"
-                                        :rules="[v => !!v || 'กรุณาเลือกรายการ']"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                        item-text="value"
-                                        item-value="id"
-                                        label="เลือกรายการ"
-                                    ></v-select>
-                                   
-                                </v-col>
+                            <!-- select AdditionCode -->
+                            <v-col cols="12" md="6" class="py-0">
+                                <p class="style-label"><span>*</span>AdditionCode</p>
+                                <v-select
+                                    v-model="dataFrom.AdditionCode"
+                                    :items="selectAdditionCode"
+                                    :rules="[v => !!v || 'กรุณาเลือกรายการ']"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                    item-text="value"
+                                    item-value="id"
+                                    label="เลือกรายการ"
+                                ></v-select>
+                                
+                            </v-col>
 
-                                <!-- input ITemCheckAmt -->
-                                <v-col cols="12" md="6" class="py-0">
-                                    <p class="style-label"><span>*</span>ITemCheckAmt</p>
-                                    <v-text-field
-                                        v-model.trim="dataFrom.ITemCheckAmt"
-                                        :rules="[numberRule]"
-                                        label="ITemCheckAmt"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                    ></v-text-field>
-                                </v-col>
+                            <!-- input ITemCheckAmt -->
+                            <v-col cols="12" md="6" class="py-0">
+                                <p class="style-label"><span>*</span>ITemCheckAmt</p>
+                                <v-text-field
+                                    v-model.trim="dataFrom.ITemCheckAmt"
+                                    :rules="[numberRule]"
+                                    label="ITemCheckAmt"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                ></v-text-field>
+                            </v-col>
 
-                                <!-- input HNRuleITemCheckType -->
-                                <v-col cols="12" md="6" class="py-0">
-                                    <p class="style-label"><span>*</span>HNRuleITemCheckType</p>
-                                    <v-text-field
-                                        v-model.trim="dataFrom.HNRuleITemCheckType"
-                                        :rules="[numberRule]"
-                                        label="HNRuleITemCheckType"
-                                        dense
-                                        outlined
-                                        single-line
-                                        clearable 
-                                    ></v-text-field>
-                                </v-col>
-                          
-                            </v-row>
+                            <!-- input HNRuleITemCheckType -->
+                            <v-col cols="12" md="6" class="py-0">
+                                <p class="style-label"><span>*</span>HNRuleITemCheckType</p>
+                                <v-text-field
+                                    v-model.trim="dataFrom.HNRuleITemCheckType"
+                                    :rules="[numberRule]"
+                                    label="HNRuleITemCheckType"
+                                    dense
+                                    outlined
+                                    single-line
+                                    clearable 
+                                ></v-text-field>
+                            </v-col>
+                        
+                        </v-row>
 
-                        </v-container>
-                    </v-card-text>
-                    <v-card-actions class="dialog-action">
-                    <v-spacer></v-spacer>
-                    <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn>
-                    <v-btn variant="text" class="btn-cancel" @click="clear">ยกเลิก</v-btn>
-                    </v-card-actions>
+                        <v-card-actions class="dialog-action px-0 py-0">
+                            <v-spacer></v-spacer>
+                            <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn>
+                            <v-btn variant="text" class="btn-cancel" @click="clear">ยกเลิก</v-btn>
+                        </v-card-actions>
+
+                    </v-container>
+                    <!-- </v-card-text> -->
+                  
                 </v-card>
 
             </v-form>
@@ -194,11 +202,11 @@
             loading: true,
             headers: [
                 { text: 'Code', align: 'left', sortable: false, value: 'Code' },
-                { text: 'AdditionCode', align: 'center', sortable: false, value: 'AdditionCode' },
-                { text: 'SelectionStockCode0', align: 'center', sortable: false, value: 'SelectionStockCode0' },
-                { text: 'EnglishName', align: 'start', sortable: false, value: 'EnglishName' },
-                { text: 'LocalName', align: 'start', sortable: false, value: 'LocalName' },
-                { text: 'ITemCheckAmt', align: 'center', sortable: false, value: 'ITemCheckAmt' },
+                { text: 'Addition Code', align: 'center', sortable: false, value: 'AdditionCode' },
+                { text: 'Selection StockCode0', align: 'center', sortable: false, value: 'SelectionStockCode0' },
+                { text: 'English Name', align: 'start', sortable: false, value: 'EnglishName' },
+                { text: 'Local Name', align: 'start', sortable: false, value: 'LocalName' },
+                { text: 'ITem CheckAmt', align: 'center', sortable: false, value: 'ITemCheckAmt' },
                 { text: 'HNRuleITemCheckType', align: 'center', sortable: false, value: 'HNRuleITemCheckType' },
                 { text: 'Action', align: 'center', value: 'action' },
             ],
@@ -254,6 +262,7 @@
                 this.loading        = await true
                 let medicineAllPath = '/api/MedicineRules/GetMedicineAll'
                 let response        = await axios.get(medicineAllPath);
+
                 await setTimeout(() => {
                     this.loading = false;
                     this.dataMedicineList = response.data;
