@@ -7,6 +7,8 @@ import Swal from 'sweetalert2';
 import store from './store'
 import VueAxios from 'vue-axios'
 
+import './globalMixin'; // เรียกใช้ Global Mixin
+
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@fortawesome/fontawesome-free/css/all.css'
 import '@mdi/font/css/materialdesignicons.min.css'

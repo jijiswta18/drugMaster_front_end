@@ -137,8 +137,7 @@
                                         item-text="value"
                                         item-value="id"
                                         label="เลือกรายการ"
-                                    ></v-select>
-                                   
+                                    ></v-select>    
                                 </v-col>
 
                                 <!-- input ITemCheckAmt -->

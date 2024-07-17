@@ -3,7 +3,7 @@
         <div class="box-login">
             <div class="box-logo mb-3">
             </div>
-            <h2 class="mb-7">Mapping Interface</h2>
+            <h2 class="mb-7">Drug Master</h2>
             <v-form
                     ref="form"
                     class="form-login mt-2"

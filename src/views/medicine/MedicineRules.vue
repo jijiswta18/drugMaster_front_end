@@ -3,11 +3,12 @@
         <div class="top-head">
             <label class="head-font">Medicine</label>
         </div>
+        
         <!-- Box Filter -->
         <v-card class="style-card mb-5">
             <v-container>
                 <v-row>
-                    <v-col >
+                    <v-col cols="12" md="10">
                         <v-text-field
                         v-model="search"
                         prepend-inner-icon="mdi-magnify"
@@ -19,8 +20,8 @@
                         clearable 
                         ></v-text-field>
                     </v-col>
-                    <v-col  md="2" class="text-right">
-                        <v-btn color="#f4742b" small class="btn-head" @click="dialogCreateReceiveRule">สร้างรายการ</v-btn>
+                    <v-col cols="12"  md="2" class="text-right">
+                        <v-btn color="#f4742b" small class="btn-head w-100" @click="dialogCreateReceiveRule">สร้างรายการ</v-btn>
                     </v-col>
                 </v-row>   
             </v-container>
@@ -53,20 +54,21 @@
         </v-tabs>
 
         <!-- Form-->
-        <v-dialog v-model="dialogReceiveRule" persistent max-width="700px">
-            <v-form ref="formReceiveRule" validate-on="submit lazy" @submit.prevent="saveReceiveRule">
+        <v-dialog v-model="dialogFrom" persistent max-width="700px">
+            <LoaderData v-if="loaderEdit && catTitle == 0"/> 
+            <v-form v-else ref="form" validate-on="submit lazy" @submit.prevent="saveReceiveRule">
                 <v-card>
                     <v-toolbar class="head-toolbar">
-                        <v-toolbar-title class="color-white">{{ TitleReceiveRule }}</v-toolbar-title>
+                        <v-toolbar-title class="color-white">{{ dialogTitle }}</v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-btn icon @click="dialogReceiveRule = false">
+                        <v-btn icon @click="clear">
                             <i class="far fa-window-close toolbar-icon"></i>
                         </v-btn>
                     </v-toolbar>
                   
                     <!-- <v-card-text class="pa-0"> -->
                     <v-container>
-                        <v-row>
+                        <v-row class="pt-2">
                             <!-- input SelectionStockCode0 -->
                             <v-col cols="12" class="py-0">
                                 <p class="style-label"><span>*</span>SelectionStockCode0</p>
@@ -192,8 +194,10 @@
   </template>
   
   <script>
-  import axios from "axios";
+
+  import LoaderData from '@/components/LoaderData.vue';
   export default {
+     components: {LoaderData},
     data() {
       return {
             tab: null,
@@ -201,19 +205,17 @@
             search: '',
             loading: true,
             headers: [
-                { text: 'Code', align: 'left', sortable: false, value: 'Code' },
-                { text: 'Addition Code', align: 'center', sortable: false, value: 'AdditionCode' },
-                { text: 'Selection StockCode0', align: 'center', sortable: false, value: 'SelectionStockCode0' },
-                { text: 'English Name', align: 'start', sortable: false, value: 'EnglishName' },
-                { text: 'Local Name', align: 'start', sortable: false, value: 'LocalName' },
-                { text: 'ITem CheckAmt', align: 'center', sortable: false, value: 'ITemCheckAmt' },
-                { text: 'HNRuleITemCheckType', align: 'center', sortable: false, value: 'HNRuleITemCheckType' },
+                { text: 'Code', align: 'left',  value: 'Code' },
+                { text: 'Addition Code', align: 'center',  value: 'AdditionCode' },
+                { text: 'Selection StockCode0', align: 'center',  value: 'SelectionStockCode0' },
+                { text: 'English Name', align: 'start',  value: 'EnglishName' },
+                { text: 'Local Name', align: 'start',  value: 'LocalName' },
+                { text: 'ITem CheckAmt', align: 'center',  value: 'ITemCheckAmt' },
+                { text: 'HNRuleITemCheckType', align: 'center',  value: 'HNRuleITemCheckType' },
                 { text: 'Action', align: 'center', value: 'action' },
             ],
             dataMedicineList : [],
-            dialogReceiveRule: false,
             dataFrom:{},
-            catReceiveRule: -1,
             selectCode: [], 
             selectAdditionCode: [{ value: 'MEDICINE', id: "MEDICINE" }, { value: 'ACTIVITY', id: "ACTIVITY" }], 
             numberRule: v  => {
@@ -226,11 +228,7 @@
     mounted(){
         this.getMedicineAll()
     },
-    computed: {
-        TitleReceiveRule () {
-            return this.catReceiveRule === -1 ? 'สร้าง' : 'แก้ไข'
-        },
-    },
+   
     methods: {
         getMedicineRules(id){
             switch (id) {
@@ -248,202 +246,214 @@
             }
 
         },
+
+        dialogCreateReceiveRule(){
+            this.getSelectcodeRule()
+            this.dialogFrom  = true
+        },
+
         async getSelectcodeRule(){
-            let codeRulePath    = '/api/MedicineRules/GetcodeRule'
-            let response        = await axios.get(codeRulePath)
+            let codeRulePath    = `/api/MedicineRules/GetcodeRule`
+            let response        = await this.$axios.get(`${codeRulePath}`)
 
             await response.data.forEach(async item => {
                 await this.selectCode.push({'id':item.Code, 'value':item.Code})
             })
 
         },
+
         async getMedicineAll(){
             try {
                 this.loading        = await true
-                let medicineAllPath = '/api/MedicineRules/GetMedicineAll'
-                let response        = await axios.get(medicineAllPath);
+                let medicineAllPath = `/api/MedicineRules/GetMedicineAll`
+                let response        = await this.$axios.get(`${medicineAllPath}`);
 
-                await setTimeout(() => {
+                setTimeout(() => {
                     this.loading = false;
                     this.dataMedicineList = response.data;
-                }, 300);
+                }, 500);
             } catch (error) {
                 this.loading = await false
                 console.error('Error fetching data:', error);
             }
         },
+
         async getActivityAll(){
             try {
                 this.loading = true
-                let activityAllPath = '/api/MedicineRules/GetActivityAll'
-                let response = await axios.get(activityAllPath);
-                await setTimeout(() => {
+                let activityAllPath = `/api/MedicineRules/GetActivityAll`
+                let response = await this.$axios.get(`${activityAllPath}`);
+                setTimeout(() => {
                     this.loading = false;
                     this.dataMedicineList = response.data;
-                }, 300);
+                }, 500);
                 
             } catch (error) {
                 this.loading = await false
                 console.error('Error fetching data:', error);
             }
         },
+
         async saveReceiveRule(){
 
-            if(this.$refs.formReceiveRule.validate()){
+            // globalMixin
+            this.alertEdit()
+            this.clear()
+
+            /* ยังไม่มีเส้น API */
+            // if(this.$refs.form.validate()){
                 
-                let catAddMedicinePath     = null
-                let fromData                  = null
-                // Medicine
-                if(this.dataFrom.AdditionCode === "MEDICINE"){ 
-                    fromData = await {
-                        "Code"                                  : this.dataFrom.Code,
-                        "AdditionCode"                          : this.dataFrom.AdditionCode,
-                        "Suffix"                                : 2,
-                        "EnglishName"                           : this.dataFrom.EnglishName,
-                        "LocalName"                             : this.dataFrom.LocalName,
-                        "CoverChargePercent"                    : 100.0,
-                        "CoverChargeRoundType"                  : 0,
-                        "HereExcluded"                          : 0,
-                        "HNRuleITemCheckType"                   : this.dataFrom.ITemCheckAmt,
-                        "ITemCheckAmt"                          : this.dataFrom.ITemCheckAmt,
-                        "LimitAmt"                              : 0.0,
-                        "SelectionStockCode0"                   : "1200000022",
-                        "SelectionStockCode1"                   : "1200000023",
-                        "SelectionStockCode2"                   : "1200001045",
-                        "SelectionStockCode3"                   : "1200000820",
-                        "SelectionStockCode4"                   : null,
-                        "SelectionStockCode5"                   : null,
-                        "SelectionStockCode6"                   : null,
-                        "SelectionStockCode7"                   : null,
-                        "SelectionStockComposeCategoryCode0"    : null,
-                        "SelectionStockComposeCategoryCode1"    : null,
-                        "SelectionStockComposeCategoryCode2"    : null,
-                        "SelectionStockComposeCategoryCode3"    : null,
-                        "xxxxxxxMaxAmtIpd"                      : 0.0,
-                        "xxxxxxxMaxAmtOpd"                      : 0.0,
-                        "CreateDateTime"                        : "2024-04-19T10:59:03.447",
-                        "CreateByUserID"                        : "806032",
-                        "UpdateDateTime"                        : null,
-                        "UpdateByUserID"                        : null,
-                        "BatchUpdateDateTime"                   : "2024-04-25T00:00:09.89"
-                    }
-                    catAddMedicinePath  =   '/api/MedicineRules/AddMedicineRules'
-                // Avtivity
-                }else{
-                    fromData = await {
-                        "Code"                              : this.dataFrom.Code,
-                        "AdditionCode"                      : this.dataFrom.AdditionCode,
-                        "Suffix"                            : 1,
-                        "EnglishName"                       : this.dataFrom.EnglishName,
-                        "LocalName"                         :  this.dataFrom.LocalName,
-                        "CoverChargePercent"                : 0.0,
-                        "CoverChargeRoundType"              : 0,
-                        "HereExcluded"                      : 0,
-                        "HNRuleITemCheckType"               : this.dataFrom.HNRuleITemCheckType,
-                        "ITemCheckAmt"                      : this.dataFrom.ITemCheckAmt,
-                        "LimitAmt"                          : 0.0,
-                        "NoDays"                            : 0,
-                        "PlanLimitAmt0"                     : 0.0,
-                        "PlanLimitAmt1"                     : 0.0,
-                        "PlanLimitAmt2"                     : 0.0,
-                        "PlanLimitAmt3"                     : 0.0,
-                        "PlanLimitAmt4"                     : 0.0,
-                        "PlanLimitAmt5"                     : 0.0,
-                        "PlanLimitAmt6"                     : 0.0,
-                        "PlanLimitAmt7"                     : 0.0,
-                        "SelectionActivityCategoryExt0"     : null,
-                        "SelectionActivityCategoryExt1"     : null,
-                        "SelectionActivityCategoryExt2"     : null,
-                        "SelectionActivityCategoryExt3"     : null,
-                        "SelectionActivityCategoryExt4"     : null,
-                        "SelectionActivityCategoryExt5"     : null,
-                        "SelectionActivityCategoryExt6"     : null,
-                        "SelectionActivityCategoryExt7"     : null,
-                        "SelectionActivityCategoryExt8"     : null,
-                        "SelectionActivityCategoryExt9"     : null,
-                        "SelectionActivityCategoryExt10"    : null,
-                        "SelectionActivityCategoryExt11"    : null,
-                        "SelectionActivityCategoryExt12"    : null,
-                        "SelectionActivityCategoryExt13"    : null,
-                        "SelectionActivityCategoryExt14"    : null,
-                        "SelectionActivityCategoryExt15"    : null,
-                        "SelectionActivityCategoryExt16"    : null,
-                        "SelectionActivityCategoryExt17"    : null,
-                        "SelectionActivityCategoryExt18"    : null,
-                        "SelectionActivityCategoryExt19"    : null,
-                        "SelectionActivityCategory0"        : null,
-                        "SelectionActivityCategory1"        : null,
-                        "SelectionActivityCategory2"        : null,
-                        "SelectionActivityCategory3"        : null,
-                        "SelectionActivityCategory4"        : null,
-                        "SelectionActivityCategory5"        : null,
-                        "SelectionActivityCategory6"        : null,
-                        "SelectionActivityCategory7"        : null,
-                        "SelectionActivityCategory8"        : null,
-                        "SelectionActivityCategory9"        : null,
-                        "SelectionActivityCodeExt0"         : null,
-                        "SelectionActivityCodeExt1"         : null,
-                        "SelectionActivityCodeExt2"         : null,
-                        "SelectionActivityCodeExt3"         : null,
-                        "SelectionActivityCodeExt4"         : null,
-                        "SelectionActivityCodeExt5"         : null,
-                        "SelectionActivityCodeExt6"         : null,
-                        "SelectionActivityCodeExt7"         : null,
-                        "SelectionActivityCodeExt8"         : null,
-                        "SelectionActivityCodeExt9"         : null,
-                        "SelectionActivityCodeExt10"        : null,
-                        "SelectionActivityCodeExt11"        : null,
-                        "SelectionActivityCodeExt12"        : null,
-                        "SelectionActivityCodeExt13"        : null,
-                        "SelectionActivityCodeExt14"        : null,
-                        "SelectionActivityCodeExt15"        : null,
-                        "SelectionActivityCodeExt16"        : null,
-                        "SelectionActivityCodeExt17"        : null,
-                        "SelectionActivityCodeExt18"        : null,
-                        "SelectionActivityCodeExt19"        : null,
-                        "SelectionActivityCode0"            : "28001",
-                        "SelectionActivityCode1"            : null,
-                        "SelectionActivityCode2"            : null,
-                        "SelectionActivityCode3"            : null,
-                        "SelectionActivityCode4"            : null,
-                        "SelectionActivityCode5"            : null,
-                        "SelectionHospitalTypeOfActivity0"  : 0,
-                        "SelectionHospitalTypeOfActivity1"  : 0,
-                        "SelectionHospitalTypeOfActivity2"  : 0,
-                        "SelectionHospitalTypeOfActivity3"  : 0,
-                        "xxxxxxxMaxAmtIpd"                  : 0.0,
-                        "CreateDateTime"                    : "2024-04-24T09:12:54.313",
-                        "CreateByUserID"                    : "806032",
-                        "UpdateDateTime"                    : null,
-                        "UpdateByUserID"                    : null,
-                        "BatchUpdateDateTime"               : "2024-04-25T02:59:18.527"
-                    }
-                    catAddMedicinePath  =   '/api/MedicineRules/AddActivityRules'
-                }
-                await axios.post(catAddMedicinePath, fromData)
+            //     let catAddMedicinePath     = null
+            //     let fromData               = null
+            //     // Medicine
+            //     if(this.dataFrom.AdditionCode === "MEDICINE"){ 
+            //         fromData = {
+            //             "Code"                                  : this.dataFrom.Code,
+            //             "AdditionCode"                          : this.dataFrom.AdditionCode,
+            //             "Suffix"                                : 2,
+            //             "EnglishName"                           : this.dataFrom.EnglishName,
+            //             "LocalName"                             : this.dataFrom.LocalName,
+            //             "CoverChargePercent"                    : 100.0,
+            //             "CoverChargeRoundType"                  : 0,
+            //             "HereExcluded"                          : 0,
+            //             "HNRuleITemCheckType"                   : this.dataFrom.ITemCheckAmt,
+            //             "ITemCheckAmt"                          : this.dataFrom.ITemCheckAmt,
+            //             "LimitAmt"                              : 0.0,
+            //             "SelectionStockCode0"                   : "1200000022",
+            //             "SelectionStockCode1"                   : "1200000023",
+            //             "SelectionStockCode2"                   : "1200001045",
+            //             "SelectionStockCode3"                   : "1200000820",
+            //             "SelectionStockCode4"                   : null,
+            //             "SelectionStockCode5"                   : null,
+            //             "SelectionStockCode6"                   : null,
+            //             "SelectionStockCode7"                   : null,
+            //             "SelectionStockComposeCategoryCode0"    : null,
+            //             "SelectionStockComposeCategoryCode1"    : null,
+            //             "SelectionStockComposeCategoryCode2"    : null,
+            //             "SelectionStockComposeCategoryCode3"    : null,
+            //             "xxxxxxxMaxAmtIpd"                      : 0.0,
+            //             "xxxxxxxMaxAmtOpd"                      : 0.0,
+            //             "CreateDateTime"                        : "2024-04-19T10:59:03.447",
+            //             "CreateByUserID"                        : "806032",
+            //             "UpdateDateTime"                        : null,
+            //             "UpdateByUserID"                        : null,
+            //             "BatchUpdateDateTime"                   : "2024-04-25T00:00:09.89"
+            //         }
+            //         catAddMedicinePath  =   '/api/MedicineRules/AddMedicineRules'
+            //     // Avtivity
+            //     }else{
+            //         fromData = {
+            //             "Code"                              : this.dataFrom.Code,
+            //             "AdditionCode"                      : this.dataFrom.AdditionCode,
+            //             "Suffix"                            : 1,
+            //             "EnglishName"                       : this.dataFrom.EnglishName,
+            //             "LocalName"                         :  this.dataFrom.LocalName,
+            //             "CoverChargePercent"                : 0.0,
+            //             "CoverChargeRoundType"              : 0,
+            //             "HereExcluded"                      : 0,
+            //             "HNRuleITemCheckType"               : this.dataFrom.HNRuleITemCheckType,
+            //             "ITemCheckAmt"                      : this.dataFrom.ITemCheckAmt,
+            //             "LimitAmt"                          : 0.0,
+            //             "NoDays"                            : 0,
+            //             "PlanLimitAmt0"                     : 0.0,
+            //             "PlanLimitAmt1"                     : 0.0,
+            //             "PlanLimitAmt2"                     : 0.0,
+            //             "PlanLimitAmt3"                     : 0.0,
+            //             "PlanLimitAmt4"                     : 0.0,
+            //             "PlanLimitAmt5"                     : 0.0,
+            //             "PlanLimitAmt6"                     : 0.0,
+            //             "PlanLimitAmt7"                     : 0.0,
+            //             "SelectionActivityCategoryExt0"     : null,
+            //             "SelectionActivityCategoryExt1"     : null,
+            //             "SelectionActivityCategoryExt2"     : null,
+            //             "SelectionActivityCategoryExt3"     : null,
+            //             "SelectionActivityCategoryExt4"     : null,
+            //             "SelectionActivityCategoryExt5"     : null,
+            //             "SelectionActivityCategoryExt6"     : null,
+            //             "SelectionActivityCategoryExt7"     : null,
+            //             "SelectionActivityCategoryExt8"     : null,
+            //             "SelectionActivityCategoryExt9"     : null,
+            //             "SelectionActivityCategoryExt10"    : null,
+            //             "SelectionActivityCategoryExt11"    : null,
+            //             "SelectionActivityCategoryExt12"    : null,
+            //             "SelectionActivityCategoryExt13"    : null,
+            //             "SelectionActivityCategoryExt14"    : null,
+            //             "SelectionActivityCategoryExt15"    : null,
+            //             "SelectionActivityCategoryExt16"    : null,
+            //             "SelectionActivityCategoryExt17"    : null,
+            //             "SelectionActivityCategoryExt18"    : null,
+            //             "SelectionActivityCategoryExt19"    : null,
+            //             "SelectionActivityCategory0"        : null,
+            //             "SelectionActivityCategory1"        : null,
+            //             "SelectionActivityCategory2"        : null,
+            //             "SelectionActivityCategory3"        : null,
+            //             "SelectionActivityCategory4"        : null,
+            //             "SelectionActivityCategory5"        : null,
+            //             "SelectionActivityCategory6"        : null,
+            //             "SelectionActivityCategory7"        : null,
+            //             "SelectionActivityCategory8"        : null,
+            //             "SelectionActivityCategory9"        : null,
+            //             "SelectionActivityCodeExt0"         : null,
+            //             "SelectionActivityCodeExt1"         : null,
+            //             "SelectionActivityCodeExt2"         : null,
+            //             "SelectionActivityCodeExt3"         : null,
+            //             "SelectionActivityCodeExt4"         : null,
+            //             "SelectionActivityCodeExt5"         : null,
+            //             "SelectionActivityCodeExt6"         : null,
+            //             "SelectionActivityCodeExt7"         : null,
+            //             "SelectionActivityCodeExt8"         : null,
+            //             "SelectionActivityCodeExt9"         : null,
+            //             "SelectionActivityCodeExt10"        : null,
+            //             "SelectionActivityCodeExt11"        : null,
+            //             "SelectionActivityCodeExt12"        : null,
+            //             "SelectionActivityCodeExt13"        : null,
+            //             "SelectionActivityCodeExt14"        : null,
+            //             "SelectionActivityCodeExt15"        : null,
+            //             "SelectionActivityCodeExt16"        : null,
+            //             "SelectionActivityCodeExt17"        : null,
+            //             "SelectionActivityCodeExt18"        : null,
+            //             "SelectionActivityCodeExt19"        : null,
+            //             "SelectionActivityCode0"            : "28001",
+            //             "SelectionActivityCode1"            : null,
+            //             "SelectionActivityCode2"            : null,
+            //             "SelectionActivityCode3"            : null,
+            //             "SelectionActivityCode4"            : null,
+            //             "SelectionActivityCode5"            : null,
+            //             "SelectionHospitalTypeOfActivity0"  : 0,
+            //             "SelectionHospitalTypeOfActivity1"  : 0,
+            //             "SelectionHospitalTypeOfActivity2"  : 0,
+            //             "SelectionHospitalTypeOfActivity3"  : 0,
+            //             "xxxxxxxMaxAmtIpd"                  : 0.0,
+            //             "CreateDateTime"                    : "2024-04-24T09:12:54.313",
+            //             "CreateByUserID"                    : "806032",
+            //             "UpdateDateTime"                    : null,
+            //             "UpdateByUserID"                    : null,
+            //             "BatchUpdateDateTime"               : "2024-04-25T02:59:18.527"
+            //         }
+            //         catAddMedicinePath  =   '/api/MedicineRules/AddActivityRules'
+            //     }
+            //     await this.$axios.post(catAddMedicinePath, fromData)
             
-            }
+            // }
+            
         },
+
         async dialogUpadateReceiveRule(value){
-            this.dataFrom           =  await JSON.parse(JSON.stringify(value));
-            this.getSelectcodeRule()
-            this.dialogReceiveRule  =  true
-            this.catReceiveRule     =  0
-        },
-        dialogCreateReceiveRule(){
-            this.getSelectcodeRule()
-            this.dialogReceiveRule  = true
- 
-        },
-        clear(){
-            this.dialogReceiveRule              = false
-            this.catReceiveRule                 = -1
-            this.dataFrom = {}
-            this.$refs.formReceiveRule.resetValidation()
-        },
+            this.catTitle           =  0
+            this.dialogFrom  =  true
 
-        
-
+            setTimeout(() => {
+            
+                this.loaderEdit     = false;
+                this.dataFrom       =  JSON.parse(JSON.stringify(value));
+                this.getSelectcodeRule()
+           
+            }, 500);
+           
+           
+            // this.dialogFrom  =  true
+            // this.catTitle     =  0
+        },
 
     }
   };
@@ -466,6 +476,12 @@
 
   .dialog-title span{
     color: white
+  }
+  ::v-deep .v-dialog{
+    box-shadow: none!important;
+  }
+  .w-100{
+    width: 100%;
   }
 
 

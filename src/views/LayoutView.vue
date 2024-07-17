@@ -13,6 +13,8 @@
             :to="{ name: 'drug-all'}"
           >
             <v-list-item link>
+              <!-- <i class="fas fa-capsules menu-icon"></i> -->
+                <!-- <i class="fas fa-pills menu-icon"></i> -->
               <i class="far fa-list-alt menu-icon"></i>
               <v-list-item-content>
                 <v-list-item-title class="menu-text">
@@ -28,7 +30,10 @@
             :to="{ name: 'medicine-rules'}"
           >
             <v-list-item link>
-              <i class="far fa-list-alt menu-icon"></i>
+
+              <i class="fas fa-clinic-medical menu-icon"></i>
+            
+              <!-- <i class="far fa-list-alt menu-icon"></i> -->
               <v-list-item-content>
                 <v-list-item-title class="menu-text">
                   Medicine Rules
@@ -347,6 +352,9 @@
     }
    
   
+    .v-text-field__details  .v-messages__message{
+      line-height: 16px;
+    }
 
  
   </style>

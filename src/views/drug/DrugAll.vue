@@ -6,7 +6,7 @@
     <v-card class="style-card mb-5">
       <v-container>
         <v-row>
-          <v-col >
+          <v-col cols="12" md="8">
             <v-text-field
               v-model="search"
               prepend-inner-icon="mdi-magnify"
@@ -18,11 +18,11 @@
               clearable 
             ></v-text-field>
           </v-col>
-          <v-col  md="2" class="text-right">
-            <v-btn color="#f4742b" small class="btn-head" @click="dialogDrugs = true">สร้างรายการ</v-btn>
+          <v-col cols="6" md="2" class="text-right">
+            <v-btn color="#f4742b" small class="btn-head w-100" @click="dialogFrom = true">สร้างรายการ</v-btn>
           </v-col>
-          <v-col  md="2" class="text-right">
-            <v-btn small color="#4caf50" class="btn-export" @click="exportToExcel">Export Excel</v-btn>
+          <v-col cols="6" md="2" class="text-right">
+            <v-btn small color="#4caf50" class="btn-export w-100" @click="exportToExcel('report-drug')">Export Excel</v-btn>
           </v-col>
           
         </v-row>   
@@ -57,18 +57,19 @@
     </v-card>
 
      <!-- Form Create, Update -->
-     <v-dialog v-model="dialogDrugs" persistent max-width="700px">
-        <v-form ref="formDrugs" validate-on="submit lazy" @submit.prevent="saveDrugs">
+     <v-dialog v-model="dialogFrom" persistent max-width="700px">
+      <LoaderData v-if="loaderEdit && catTitle == 0"/>
+        <v-form v-else ref="form" validate-on="submit lazy" @submit.prevent="saveDrugs">
             <v-card>
               <v-toolbar class="head-toolbar">
-                <v-toolbar-title class="color-white">{{ TitleDrugs }}</v-toolbar-title>
+                <v-toolbar-title class="color-white">{{ dialogTitle }}</v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-btn icon @click="dialogDrugs = false">
+                  <v-btn icon @click="clear">
                     <i class="far fa-window-close toolbar-icon"></i>
                   </v-btn>
               </v-toolbar>
               <v-container>
-                  <v-row>
+                  <v-row class="pt-2">
                     
                     <!-- input Drug_Code -->
                     <v-col cols="12" md="6" class="py-0">
@@ -247,37 +248,32 @@
       </v-dialog>
 
       <v-dialog v-model="showDrugsPrice" persistent max-width="700px">
-            <v-card>
+        <LoaderData  v-if="loaderCheckPrice"/>
+          
+            <v-card v-else>
               <v-toolbar class="head-toolbar">
-                    <v-toolbar-title class="color-white">รายละเอียดราคา</v-toolbar-title>
-                    <v-spacer></v-spacer>
-                    <v-btn icon @click="showDrugsPrice = false">
-                      <i class="far fa-window-close toolbar-icon"></i>
-                    </v-btn>
-                </v-toolbar>
-                <!-- <v-card-title class="dialog-title mb-3">
-                    <span class="text-h5">รายละเอียดราคา</span>
-                </v-card-title> -->
-                <v-card-text class="pa-0">
-                    <v-container>
-                      <v-data-table
-                          :headers="headersDrugPrice"
-                          :items="datasDrugPrice"
-                          :search="search"
-                          :loading="loading"
-                          loading-text="Loading... Please wait"
-                          :footer-props="{ 'items-per-page-options': [10, 20, 30, 100] }"
-                          class="style-table"
-                        >
-                        <template v-slot:[`item.Create_Date`]="{ item }">{{ formatDate(item.Create_Date )}}</template>
-                      </v-data-table>
-                    </v-container>
-                </v-card-text>
-
-                <!-- <v-card-actions class="dialog-action">
-                <v-spacer></v-spacer>
-                  <v-btn variant="text" class="btn-cancel" @click="showDrugsPrice = false">ยกเลิก</v-btn>
-                </v-card-actions> -->
+                  <v-toolbar-title class="color-white">รายละเอียดราคา</v-toolbar-title>
+                  <v-spacer></v-spacer>
+                  <v-btn icon @click="clearDrugsPrice">
+                    <i class="far fa-window-close toolbar-icon"></i>
+                  </v-btn>
+              </v-toolbar>
+          
+              <v-card-text class="pa-0">
+                  <v-container>
+                    <v-data-table
+                        :headers="headersDrugPrice"
+                        :items="datasDrugPrice"
+                        :search="search"
+                        :loading="loading"
+                        loading-text="Loading... Please wait"
+                        :footer-props="{ 'items-per-page-options': [10, 20, 30, 100] }"
+                        class="style-table"
+                      >
+                      <template v-slot:[`item.Create_Date`]="{ item }">{{ formatDate(item.Create_Date )}}</template>
+                    </v-data-table>
+                  </v-container>
+              </v-card-text>
 
             </v-card>
 
@@ -289,144 +285,54 @@
 
 
 <script>
-
-  import axios from "axios";
-  import * as XLSX from 'xlsx';
   import DatePicker from '@/components/DatePicker.vue';
+  import LoaderData from '@/components/LoaderData.vue';
   import moment from 'moment';
   import 'moment/locale/th'; // Import the Thai locale
   export default {
-    components: {DatePicker},
+    components: {DatePicker, LoaderData},
     data : () => ({
       search: '',
       loading: true,
-      headers: [
-        {
-          text: 'Code',
-          align: 'left',
-          value: 'Drug_Code',
-        },
-        {
-          text: 'Drug ThaiName',
-          align: 'start',
-          sortable: false,
-          value: 'Drug_ThaiName',
-        },
-        {
-          text: 'Drug EnglishName',
-          align: 'start',
-          sortable: false,
-          value: 'Drug_EnglishName',
-        },
-        {
-          text: 'Drug Catagory',
-          align: 'start',
-          sortable: false,
-          value: 'Drug_Catagory',
-        },
-        { text: 'Create Date', value: 'Create_Date' },
-        {
-          text: 'Action',
-          align: 'center',
-          value: 'action',
-        },
-      ],
       dataDurgList: [],
       getStartDate: null,
       getEndDate: null,
       checkPage : true,
-      dialogDrugs :false,
       showDrugsPrice: false,
       dataFrom: {},
-      catDrugs: -1,
       Drug_Code: {},
       datasDrugPrice: [],
-      headersDrugPrice: [
-        {
-          text: 'Running No',
-          align: 'left',
-          value: 'Running_No',
-        },
-        {
-          text: 'Drug Code',
-          align: 'start',
-          sortable: false,
-          value: 'Drug_Code',
-        },
-        {
-          text: 'Price Type',
-          align: 'start',
-          sortable: false,
-          value: 'Price_Type',
-        },
-        {
-          text: 'Unit Code1',
-          align: 'start',
-          sortable: false,
-          value: 'UnitCode1',
-        },
-        {
-          text: 'Unit Price1',
-          align: 'start',
-          sortable: false,
-          value: 'UnitPrice1',
-        },
-        {
-          text: 'Unit Code2',
-          align: 'start',
-          sortable: false,
-          value: 'UnitCode2',
-        },
-        {
-          text: 'Unit Price2',
-          align: 'start',
-          sortable: false,
-          value: 'UnitPrice2',
-        },
-        {
-          text: 'Unit Code3',
-          align: 'start',
-          sortable: false,
-          value: 'UnitCode3',
-        },
-        {
-          text: 'Unit Price3',
-          align: 'start',
-          sortable: false,
-          value: 'UnitPrice3',
-        },
-
-        {
-          text: 'Create Date',
-          align: 'start',
-          sortable: false,
-          value: 'Create_Date',
-        },
-        // {
-        //   text: 'EffDateTimeFrom',
-        //   align: 'start',
-        //   sortable: false,
-        //   value: 'EffDateTimeFrom',
-        // },
-
-        {
-          text: 'InActive',
-          align: 'start',
-          sortable: false,
-          value: 'InActive',
-        },
-
+      headers: [
+        {text: 'Code', align: 'left', value: 'Drug_Code'},
+        {text: 'Drug ThaiName', align: 'start', value: 'Drug_ThaiName'},
+        {text: 'Drug EnglishName', align: 'start', value: 'Drug_EnglishName'},
+        {text: 'Drug Catagory', align: 'start', value: 'Drug_Catagory'},
+        {text: 'Create Date', value: 'Create_Date' },
+        {text: 'Action', align: 'center', value: 'action'},
       ],
+      headersDrugPrice: [
+        {text: 'Running No', align: 'left', value: 'Running_No'},
+        {text: 'Drug Code', align: 'start', sortable: false, value: 'Drug_Code'},
+        {text: 'Price Type', align: 'start', sortable: false, value: 'Price_Type'},
+        {text: 'Unit Code1', align: 'start', sortable: false, value: 'UnitCode1'},
+        {text: 'Unit Price1', align: 'start', sortable: false, value: 'UnitPrice1'},
+        {text: 'Unit Code2', align: 'start', sortable: false, value: 'UnitCode2'},
+        {text: 'Unit Price2', align: 'start', sortable: false, value: 'UnitPrice2'},
+        {text: 'Unit Code3', align: 'start', sortable: false, value: 'UnitCode3'},
+        {text: 'Unit Price3', align: 'start', sortable: false, value: 'UnitPrice3'},
+        {text: 'Create Date', align: 'start', sortable: false, value: 'Create_Date'},
+        {text: 'InActive', align: 'start', sortable: false, value: 'InActive'},
+      ],
+      loaderCheckPrice  : true,
  
     }), 
     mounted(){
-        this.getListDrugAll()
-
+      this.getListDrugAll()
     },
+
     computed: {
 
       filteredItems() {
-      
         return this.dataDurgList.filter(item => {
           const itemDate = item.Create_Date;
           const startDate = this.getStartDate;
@@ -436,147 +342,126 @@
             (endDate === null || itemDate <= endDate)
           );
         });
+      },
 
-     
-      },
-      TitleDrugs () {
-          return this.catDrugs === -1 ? 'สร้าง' : 'แก้ไข'
-      },
-   
     },
+
     methods: {
-
-
-      getThaiDate(item){
-        if (item){
-          var d = new Date(item);
-          return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-        }else{
-          return "";
-        }            
-      },
-      formatDate(value) {
-            return moment(value).format("YYYY-MM-DD HH:mm:ss")
-        },
-
-      exportToExcel() {
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.json_to_sheet(this.filteredItems);
-        XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-
-        /* generate XLSX file and send to client */
-        XLSX.writeFile(wb, 'report-drug.xlsx');
-      },
 
       changeStartDate(date){
         this.getStartDate = date
       },
 
       changeEndDate(date){
-          this.getEndDate = date
+        this.getEndDate = date
       },
 
-      clear(){
-        this.dialogDrugs            = false
-        this.catDrugs               = -1
-        this.dataFrom = {}
-        this.$refs.formDrugs.resetValidation()
+      clearDrugsPrice(){
+        
+        this.loaderCheckPrice   = true
+        this.showDrugsPrice     = false
       },
 
       async dialogUpadateDrugs(value){
-          this.catDrugs           = await 0
-          this.dialogDrugs        = await true
-          this.dataFrom           = await JSON.parse(JSON.stringify(value));
+        this.catTitle           = await 0
+        this.dialogFrom        = await true
+        setTimeout(() => {
+          this.loaderEdit       = false;
+          this.dataFrom         = JSON.parse(JSON.stringify(value));
+        }, 500);
       },
-      async dialogDrugsPrice(Drug_Code){
-          this.showDrugsPrice   = await true
-          try {
-            let drugsPriceAllPath = `/api/InterfaceBrowser/GetDrugsPrice?Drug_Code=${Drug_Code}`
-            let response          = await axios.get(drugsPriceAllPath);
-            const data            = await response.data
-            this.datasDrugPrice   = await data;
 
-          } catch (error) {
-            console.log('drugsPriceAllPath',error);
-          }
-          // this.dataFrom           = await JSON.parse(JSON.stringify(value));
+      async dialogDrugsPrice(Drug_Code){
+        this.showDrugsPrice             = await true
+        try {
+          let drugsPriceAllPath         = `/api/InterfaceBrowser/GetDrugsPrice?Drug_Code=${Drug_Code}`
+          let response                  = await this.$axios.get(drugsPriceAllPath);
+          setTimeout(() => {
+            this.loaderCheckPrice       = false;
+            const data                  = response.data;
+            this.datasDrugPrice         = data;
+          }, 500);
+        } catch (error) {
+          this.loaderCheckPrice         = false;
+          console.log('drugsPriceAllPath', error);
+        }
+
       },
 
       async getListDrugAll(){
         try {
-            // let drugAllPath = '/api/Drug_Master'
-            let drugAllPath = '/api/InterfaceBrowser/GetDrugs'
-            let response = await axios.get(drugAllPath);
-            this.dataDurgList = await response.data;
-        
-            this.loading = await false
+            let drugAllPath     = `/api/InterfaceBrowser/GetDrugs`
+            let response        = await this.$axios.get(`${drugAllPath}`);
+            this.dataDurgList   = await response.data;
+            this.loading        = await false
         } catch (error) {
-            this.loading = await false
-
+            this.loading        = await false
             console.error('Error fetching data:', error);
         }
       },
 
       async saveDrugs(){
         try {
-          if(this.$refs.formDrugs.validate()){
+          if(this.$refs.form.validate()){
             let fd = null
             let drugPath = null
-            if(this.catDrugs === -1){
+            if(this.catTitle === -1){
               // create
-              fd = await{
-                "drug_Code" : this.dataFrom.Drug_Code,
-                "drug_EnglishName": this.dataFrom.Drug_EnglishName,
-                "drug_ThaiName": this.dataFrom.Drug_ThaiName,
-                "drug_GenericName": this.dataFrom.Drug_GenericName,
-                "drug_TradeName": this.dataFrom.Drug_TradeName,
-                "drug_Catagory": this.dataFrom.Drug_Catagory,
-                "tpU_Code": this.dataFrom.TPU_Code,
-                "gpU_Code": this.dataFrom.GPU_Code,
-                "claim_Desc": this.dataFrom.Claim_Desc,
-                "group_Bill": this.dataFrom.Group_Bill,
-                "simb": this.dataFrom.SIMB,
-                "claimCat": this.dataFrom.ClaimCat,
-                "create_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
-                "create_By": this.dataFrom.create_By,
-                "cxl_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
-                "cxl_By": this.dataFrom.cxl_By,
-                "update_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
-                "update_By": this.dataFrom.update_By,
-                "stockInactiveCode": this.dataFrom.stockInactiveCode,
+              fd = {
+                "drug_Code"           : this.dataFrom.Drug_Code,
+                "drug_EnglishName"    : this.dataFrom.Drug_EnglishName,
+                "drug_ThaiName"       : this.dataFrom.Drug_ThaiName,
+                "drug_GenericName"    : this.dataFrom.Drug_GenericName,
+                "drug_TradeName"      : this.dataFrom.Drug_TradeName,
+                "drug_Catagory"       : this.dataFrom.Drug_Catagory,
+                "tpU_Code"            : this.dataFrom.TPU_Code,
+                "gpU_Code"            : this.dataFrom.GPU_Code,
+                "claim_Desc"          : this.dataFrom.Claim_Desc,
+                "group_Bill"          : this.dataFrom.Group_Bill,
+                "simb"                : this.dataFrom.SIMB,
+                "claimCat"            : this.dataFrom.ClaimCat,
+                "create_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
+                "create_By"           : this.dataFrom.create_By,
+                "cxl_Date"            : moment().format('YYYY-MM-DD HH:mm:ss'),
+                "cxl_By"              : this.dataFrom.cxl_By,
+                "update_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
+                "update_By"           : this.dataFrom.update_By,
+                "stockInactiveCode"   : this.dataFrom.stockInactiveCode,
               }
               drugPath = await `/api/InterfaceBrowser/CreateDrugMaster`
             }else{
-              fd = await{
-                "drug_Code" : this.dataFrom.Drug_Code,
-                "drug_EnglishName": this.dataFrom.Drug_EnglishName,
-                "drug_ThaiName": this.dataFrom.Drug_ThaiName,
-                "drug_GenericName": this.dataFrom.Drug_GenericName,
-                "drug_TradeName": this.dataFrom.Drug_TradeName,
-                "drug_Catagory": this.dataFrom.Drug_Catagory,
-                "tpU_Code": this.dataFrom.TPU_Code,
-                "gpU_Code": this.dataFrom.GPU_Code,
-                "claim_Desc": this.dataFrom.Claim_Desc,
-                "group_Bill": this.dataFrom.Group_Bill,
-                "simb": this.dataFrom.SIMB,
-                "claimCat": this.dataFrom.ClaimCat,
-                "cxl_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
-                "cxl_By": this.dataFrom.cxl_By,
-                "update_Date": moment().format('YYYY-MM-DD HH:mm:ss'),
-                "update_By": this.dataFrom.update_By,
-                "stockInactiveCode": this.dataFrom.stockInactiveCode,
-              }
+
+              this.alertEdit()
+              this.clear()
+              // fd = {
+              //   "drug_Code"           : this.dataFrom.Drug_Code,
+              //   "drug_EnglishName"    : this.dataFrom.Drug_EnglishName,
+              //   "drug_ThaiName"       : this.dataFrom.Drug_ThaiName,
+              //   "drug_GenericName"    : this.dataFrom.Drug_GenericName,
+              //   "drug_TradeName"      : this.dataFrom.Drug_TradeName,
+              //   "drug_Catagory"       : this.dataFrom.Drug_Catagory,
+              //   "tpU_Code"            : this.dataFrom.TPU_Code,
+              //   "gpU_Code"            : this.dataFrom.GPU_Code,
+              //   "claim_Desc"          : this.dataFrom.Claim_Desc,
+              //   "group_Bill"          : this.dataFrom.Group_Bill,
+              //   "simb"                : this.dataFrom.SIMB,
+              //   "claimCat"            : this.dataFrom.ClaimCat,
+              //   "cxl_Date"            : moment().format('YYYY-MM-DD HH:mm:ss'),
+              //   "cxl_By"              : this.dataFrom.cxl_By,
+              //   "update_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
+              //   "update_By"           : this.dataFrom.update_By,
+              //   "stockInactiveCode"   : this.dataFrom.stockInactiveCode,
+              // }
             }
 
-            await axios.post(`${drugPath}`, fd)
+            await this.$axios.post(`${drugPath}`, fd)
 
           }
         } catch (error) {
           console.log('saveDrugs',error);
         }
       
-      }
-
+      },
 
     }
   }
@@ -611,7 +496,13 @@
   .f-16{
     font-size: 16px;
   }
+  .w-100{
+    width: 100%;
+  }
 
+  ::v-deep .v-dialog{
+    box-shadow: none!important;
+  }
   /* ::v-deep .style-table thead.v-data-table-header {
         background: #D9D9D9!important;
     }

@@ -28,7 +28,7 @@ const router = new VueRouter({
       children: [
     
         {
-          path: 'drug',
+          path: '',
           name: "drug-all",
           component: DrugAll
         },
@@ -62,69 +62,28 @@ const router = new VueRouter({
   ]
 })
 
-// const routes = [
 
-
-
-//     { 
-//       path: "/",
-//       component: LayoutView,
-//       meta: { requiresAuth: true }, 
-//       children: [
-    
-//         {
-//           path: 'drug',
-//           name: "drug-all",
-//           component: DrugAll
-//         },
-//         {
-//           path: "drug/:id",
-//           name: "drug-detail",
-//           component: DrugById
-//         },
-        
-//         {
-//           path: "medicine",
-//           name: "medicine-rules",
-//           component: MedicineRules
-//         },
-
-//         {
-//           path: "receive",
-//           name: "receive-rules",
-//           component: ReceiveRules
-//         },
-//       ]
-//     },
-
-//     {
-//       path: "/login",
-//       name: "Login",
-//       component: LoginView
-//     },
-
-//     { path: "/:pathMatch(.*)*", name: "NotFound", component: PageNotFound },
-
-  
-// ]
 
 
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-
+    // Check if the route requires authentication
     store.dispatch('checkLogin');
-    
+
     // Check if the user is authenticated
     if (!store.getters.isLoggedIn) {
       next('/login'); // Redirect to login page if not authenticated
     } else {
       next(); // Proceed to the route
     }
+  } else if (to.name === 'Login') {
+    // If navigating to the login page, clear store and proceed
+    store.dispatch('clearUserData'); // Replace with your Vuex action to clear user data
+    next();
   } else {
     next(); // Continue to other routes
   }
 });
-
 
 // const router = new VueRouter({
 //   mode: "history",
