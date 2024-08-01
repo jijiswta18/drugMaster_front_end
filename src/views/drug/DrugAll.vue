@@ -19,7 +19,7 @@
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="2" class="text-right">
-            <v-btn color="#f4742b" small class="btn-head w-100" @click="dialogFrom = true">สร้างรายการ</v-btn>
+            <v-btn color="#f4742b" small class="btn-head w-100 disabled"  @click="dialogFrom = true">สร้างรายการ</v-btn>
           </v-col>
           <v-col cols="6" md="2" class="text-right">
             <v-btn small color="#4caf50" class="btn-export w-100" @click="exportToExcel('report-drug')">Export Excel</v-btn>
@@ -236,11 +236,12 @@
                   </v-row>
                   <v-card-actions class="dialog-action px-0 py-0">
                     <v-spacer></v-spacer>
-                      <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn>
-                      <v-btn variant="text" class="btn-cancel" @click="clear">ยกเลิก</v-btn>
+                      <!-- ปุ่ม สร้างและแก้ไข-->
+                      <!-- <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn> -->
+                      <!-- <v-btn variant="text" class="btn-cancel" @click="clear">ยกเลิก</v-btn> -->
                     </v-card-actions>
               </v-container>
-                <!-- </v-card-text> -->
+
                 
             </v-card>
 
@@ -503,14 +504,5 @@
   ::v-deep .v-dialog{
     box-shadow: none!important;
   }
-  /* ::v-deep .style-table thead.v-data-table-header {
-        background: #D9D9D9!important;
-    }
-
-    ::v-deep .style-table thead.v-data-table-header span{
-        color: #000;
-    }
-   */
-
 
 </style>

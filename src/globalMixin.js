@@ -12,7 +12,8 @@ Vue.mixin({
     }),
     computed: {
         dialogTitle () {
-            return this.catTitle === -1 ? 'สร้าง' : 'แก้ไข'
+            // return this.catTitle === -1 ? 'สร้าง' : 'แก้ไข'
+            return this.catTitle === -1 ? 'สร้าง' : 'รายละเอียดยา'
         },
     },
     methods: {

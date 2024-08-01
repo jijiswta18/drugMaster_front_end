@@ -9,6 +9,7 @@ module.exports = {
         target: 'http://172.19.107.54:8080', // Replace with your API base URL
 
       },
+      
 
       // '^/ldap': {
       //   target: 'http://172.19.107.54:8080', // Replace with your API base URL

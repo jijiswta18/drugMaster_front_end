@@ -3,7 +3,7 @@
         <div class="top-head">
             <label class="head-font">Medicine</label>
         </div>
-        
+
         <!-- Box Filter -->
         <v-card class="style-card mb-5">
             <v-container>
@@ -21,7 +21,7 @@
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12"  md="2" class="text-right">
-                        <v-btn color="#f4742b" small class="btn-head w-100" @click="dialogCreateReceiveRule">สร้างรายการ</v-btn>
+                        <v-btn color="#f4742b" small class="btn-head w-100 disabled" @click="dialogCreateReceiveRule">สร้างรายการ</v-btn>
                     </v-col>
                 </v-row>   
             </v-container>
@@ -179,7 +179,7 @@
 
                         <v-card-actions class="dialog-action px-0 py-0">
                             <v-spacer></v-spacer>
-                            <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn>
+                            <!-- <v-btn variant="text" class="btn-save" type="submit">บันทึก</v-btn> -->
                             <v-btn variant="text" class="btn-cancel" @click="clear">ยกเลิก</v-btn>
                         </v-card-actions>
 
@@ -458,7 +458,7 @@
     }
   };
   </script>
-  <style scoped>
+<style scoped>
 
   ::v-deep thead.v-data-table-header {
     background: #223E7E!important;

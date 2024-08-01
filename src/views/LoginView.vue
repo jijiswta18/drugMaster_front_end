@@ -1,8 +1,15 @@
 <template>
     <div class="page-login">
         <div class="box-login">
-            <div class="box-logo mb-3">
+            <div class="box-logo">
+                <v-img
+                    :aspect-ratio="1"
+                    src="../assets/drug _master.png"
+                    width="300"
+                ></v-img>
+               
             </div>
+            
             <h2 class="mb-7">Drug Master</h2>
             <v-form
                     ref="form"
@@ -169,7 +176,7 @@ export default {
         margin: 0 1rem;
         width: 100%;
         max-width: 450px;
-        max-height: 570px;
+        /* max-height: 570px; */
         padding: 1.5rem;
         background-color: #fff;
         border-radius: 15px;
@@ -205,6 +212,23 @@ export default {
         background: #e7e7e7;
         text-align: center;
     }
+
+    .box-logo{
+        width: 100px;
+        height: 100px;
+        margin: auto;
+        margin-bottom: 1rem;
+    }
+    .box-logo .v-image{
+        width: 300px;
+        border: 3px solid #f4742b;
+        border-radius: 50%;
+        background: #f4742b;
+        width: 50p;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        overflow: inherit!important;
+    }
+   
 
     
 </style>

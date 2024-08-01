@@ -2,11 +2,22 @@
     <v-app id="app">
       <v-navigation-drawer class="sidebar" v-model="drawer" app>
         <v-list-item >
-          <v-list-item-content class="head-menuhome">
-          </v-list-item-content>
+          <!-- <v-list-item-content class="head-menuhome"> -->
+            <div class="navbar-left">
+              <v-img
+                :aspect-ratio="1"
+                src="../assets/drug _master.png"
+
+              >  </v-img>
+           
+              <div class="color-white">Drug Master</div>
+            </div>
+         
+          <!-- </v-list-item-content> -->
         </v-list-item>
 
         <v-list class="mt-5" dense nav>  
+        
           <router-link 
             class="d-flex align-center menu-link"
             active-class="activemenu"
@@ -24,7 +35,7 @@
             </v-list-item>
           </router-link>
   
-          <router-link 
+          <!-- <router-link 
             class="d-flex align-center menu-link"
             active-class="activemenu"
             :to="{ name: 'medicine-rules'}"
@@ -32,15 +43,13 @@
             <v-list-item link>
 
               <i class="fas fa-clinic-medical menu-icon"></i>
-            
-              <!-- <i class="far fa-list-alt menu-icon"></i> -->
               <v-list-item-content>
                 <v-list-item-title class="menu-text">
                   Medicine Rules
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-          </router-link>
+          </router-link> -->
 
 
   
@@ -355,6 +364,32 @@
     .v-text-field__details  .v-messages__message{
       line-height: 16px;
     }
+
+    
+  .disabled{
+    opacity: 0.9; 
+    cursor: not-allowed;
+    pointer-events: none; 
+  }
+
+  .navbar-left{
+    width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+  }
+  .navbar-left .v-image{
+    border: 2px solid #f4742b;
+    border-radius: 50%;
+    background: #f4742b;
+    margin-right: 14px;
+    overflow: inherit!important;
+    flex: none!important;
+    width: 40px;
+    box-shadow: rgb(0 0 0 / 29%) 0px 5px 15px;
+  }
+ 
+
 
  
   </style>
