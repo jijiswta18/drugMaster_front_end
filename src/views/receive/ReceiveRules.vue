@@ -67,7 +67,7 @@
                                 <v-col cols="12" class="py-0">
                                     <p class="style-label"><span>*</span>SelectionStockCode0</p>
                                     <v-text-field
-                                        v-model="dataFrom.SelectionStockCode0"
+                                        v-model="dataForm.SelectionStockCode0"
                                         :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                         label="SelectionStockCode0"
                                         dense
@@ -81,7 +81,7 @@
                                 <v-col cols="12" class="py-0">
                                     <p class="style-label"><span>*</span>EnglishName</p>
                                     <v-text-field
-                                        v-model="dataFrom.EnglishName"
+                                        v-model="dataForm.EnglishName"
                                         :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                         label="EnglishName"
                                         dense
@@ -95,7 +95,7 @@
                                 <v-col cols="12" class="py-0">
                                     <p class="style-label"><span>*</span>LocalName</p>
                                     <v-text-field
-                                        v-model="dataFrom.LocalName"
+                                        v-model="dataForm.LocalName"
                                         :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                                         label="LocalName"
                                         dense
@@ -116,7 +116,7 @@
                                         label="เลือกรายการ"
                                         item-text="value"
                                         item-value="id"
-                                        v-model="dataFrom.Code"
+                                        v-model="dataForm.Code"
                                         :items="selectCode"
                                         :rules="[v => !!v || 'กรุณาเลือกรายการ']"
                                         
@@ -127,7 +127,7 @@
                                 <v-col cols="12" md="6" class="py-0">
                                     <p class="style-label"><span>*</span>AdditionCode</p>
                                     <v-select
-                                        v-model="dataFrom.AdditionCode"
+                                        v-model="dataForm.AdditionCode"
                                         :items="selectAdditionCode"
                                         :rules="[v => !!v || 'กรุณาเลือกรายการ']"
                                         dense
@@ -144,7 +144,7 @@
                                 <v-col cols="12" md="6" class="py-0">
                                     <p class="style-label"><span>*</span>ITemCheckAmt</p>
                                     <v-text-field
-                                        v-model.trim="dataFrom.ITemCheckAmt"
+                                        v-model.trim="dataForm.ITemCheckAmt"
                                         :rules="[numberRule]"
                                         label="ITemCheckAmt"
                                         dense
@@ -158,7 +158,7 @@
                                 <v-col cols="12" md="6" class="py-0">
                                     <p class="style-label"><span>*</span>HNRuleITemCheckType</p>
                                     <v-text-field
-                                        v-model.trim="dataFrom.HNRuleITemCheckType"
+                                        v-model.trim="dataForm.HNRuleITemCheckType"
                                         :rules="[numberRule]"
                                         label="HNRuleITemCheckType"
                                         dense
@@ -206,7 +206,7 @@
             ],
             dataReceiveList : [],
             dialogReceiveRule: false,
-            dataFrom:{},
+            dataForm:{},
             catReceiveRule: -1,
             selectCode: [{ value: 'ยาสำรองจ่ายข้าราชการ', id: "ยาสำรองจ่ายข้าราชการ" }], 
             selectAdditionCode: [{ value: 'MEDICINE', id: "MEDICINE" }, { value: 'ACTIVITY', id: "ACTIVITY" }], 
@@ -282,18 +282,18 @@
                 let catAddMedicinePath     = null
                 let fromData                  = null
                 // Medicine
-                if(this.dataFrom.AdditionCode === "MEDICINE"){ 
+                if(this.dataForm.AdditionCode === "MEDICINE"){ 
                     fromData = await {
-                        "Code"                                  : this.dataFrom.Code,
-                        "AdditionCode"                          : this.dataFrom.AdditionCode,
+                        "Code"                                  : this.dataForm.Code,
+                        "AdditionCode"                          : this.dataForm.AdditionCode,
                         "Suffix"                                : 2,
-                        "EnglishName"                           : this.dataFrom.EnglishName,
-                        "LocalName"                             : this.dataFrom.LocalName,
+                        "EnglishName"                           : this.dataForm.EnglishName,
+                        "LocalName"                             : this.dataForm.LocalName,
                         "CoverChargePercent"                    : 100.0,
                         "CoverChargeRoundType"                  : 0,
                         "HereExcluded"                          : 0,
-                        "HNRuleITemCheckType"                   : this.dataFrom.ITemCheckAmt,
-                        "ITemCheckAmt"                          : this.dataFrom.ITemCheckAmt,
+                        "HNRuleITemCheckType"                   : this.dataForm.ITemCheckAmt,
+                        "ITemCheckAmt"                          : this.dataForm.ITemCheckAmt,
                         "LimitAmt"                              : 0.0,
                         "SelectionStockCode0"                   : "1200000022",
                         "SelectionStockCode1"                   : "1200000023",
@@ -319,16 +319,16 @@
                 // Avtivity
                 }else{
                     fromData = await {
-                        "Code"                              : this.dataFrom.Code,
-                        "AdditionCode"                      : this.dataFrom.AdditionCode,
+                        "Code"                              : this.dataForm.Code,
+                        "AdditionCode"                      : this.dataForm.AdditionCode,
                         "Suffix"                            : 1,
-                        "EnglishName"                       : this.dataFrom.EnglishName,
-                        "LocalName"                         :  this.dataFrom.LocalName,
+                        "EnglishName"                       : this.dataForm.EnglishName,
+                        "LocalName"                         :  this.dataForm.LocalName,
                         "CoverChargePercent"                : 0.0,
                         "CoverChargeRoundType"              : 0,
                         "HereExcluded"                      : 0,
-                        "HNRuleITemCheckType"               : this.dataFrom.HNRuleITemCheckType,
-                        "ITemCheckAmt"                      : this.dataFrom.ITemCheckAmt,
+                        "HNRuleITemCheckType"               : this.dataForm.HNRuleITemCheckType,
+                        "ITemCheckAmt"                      : this.dataForm.ITemCheckAmt,
                         "LimitAmt"                          : 0.0,
                         "NoDays"                            : 0,
                         "PlanLimitAmt0"                     : 0.0,
@@ -414,7 +414,7 @@
         },
         dialogUpadateReceiveRule(value){
             console.log(value);
-            this.dataFrom           = value
+            this.dataForm           = value
             this.dialogReceiveRule  = true
             this.catReceiveRule     = 0
         },
@@ -425,7 +425,7 @@
         clear(){
             this.dialogReceiveRule              = false
             this.catReceiveRule                 = -1
-            this.dataFrom = {}
+            this.dataForm = {}
             this.$refs.formReceiveRule.resetValidation()
         },
 

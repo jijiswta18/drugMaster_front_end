@@ -71,11 +71,8 @@
     </div>
     
 </template>
-<!--  -->
-<script>
 
-// import axios from "axios";
-// import Swal from 'sweetalert2';
+<script>
 import store  from '../store/index.js';
 
 
@@ -135,10 +132,6 @@ export default {
                             showConfirmButton: false,
                             timer: 1000
                         })
-
-                        // const expiryDate = new Date().getTime() + (60 * 60 * 1000);
-                       
-                        // store.dispatch('setLoginExpiry', expiryDate);
 
                         
                     }

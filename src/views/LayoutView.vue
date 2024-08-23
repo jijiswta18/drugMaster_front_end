@@ -3,14 +3,12 @@
       <v-navigation-drawer class="sidebar" v-model="drawer" app>
         <v-list-item >
           <!-- <v-list-item-content class="head-menuhome"> -->
-            <div class="navbar-left">
-              <v-img
-                :aspect-ratio="1"
-                src="../assets/drug _master.png"
-
-              >  </v-img>
-           
+            <div>
+              <a href="/" class="navbar-left">
+                <v-img :aspect-ratio="1" src="../assets/drug _master.png"> </v-img>
               <div class="color-white">Drug Master</div>
+              </a>
+           
             </div>
          
           <!-- </v-list-item-content> -->
@@ -24,12 +22,27 @@
             :to="{ name: 'drug-all'}"
           >
             <v-list-item link>
-              <!-- <i class="fas fa-capsules menu-icon"></i> -->
-                <!-- <i class="fas fa-pills menu-icon"></i> -->
               <i class="far fa-list-alt menu-icon"></i>
               <v-list-item-content>
                 <v-list-item-title class="menu-text">
                   Drug
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </router-link>
+
+
+          <router-link 
+            class="d-flex align-center menu-link"
+            active-class="activemenu"
+            :to="{ name: 'drug-notify'}"
+          >
+            <v-list-item link>
+          
+              <i class="fas fa-bell menu-icon"></i>
+              <v-list-item-content>
+                <v-list-item-title class="menu-text">
+                  Drug Notify
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -317,10 +330,7 @@
 
       color: white;
     }
-    /* .v-list-item--active{
-      background-color: #f4742b;
-      color: white!important;
-    } */
+
        /* custom sweetAlert */
     div:where(.swal2-container) div:where(.swal2-popup) {
       font-family:'chulabhornlikittext', sans-serif !important;
@@ -377,6 +387,7 @@
     height: 64px;
     display: flex;
     align-items: center;
+    text-decoration: none;
   }
   .navbar-left .v-image{
     border: 2px solid #f4742b;

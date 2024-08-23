@@ -19,10 +19,10 @@
             ></v-text-field>
           </v-col>
           <v-col cols="6" md="2" class="text-right">
-            <v-btn color="#f4742b" small class="btn-head w-100 disabled"  @click="dialogFrom = true">สร้างรายการ</v-btn>
+            <v-btn color="#f4742b" small class="btn-head w-100 disabled"  @click="dialogForm = true">สร้างรายการ</v-btn>
           </v-col>
           <v-col cols="6" md="2" class="text-right">
-            <v-btn small color="#4caf50" class="btn-export w-100" @click="exportToExcel('report-drug')">Export Excel</v-btn>
+            <v-btn small color="#4caf50" class="btn-export w-100" @click="exportToExcel">Export Excel</v-btn>
           </v-col>
           
         </v-row>   
@@ -32,7 +32,6 @@
 
       <!-- Table -->
     <v-card class="style-card">
-   
       <v-data-table
           :headers="headers"
           :items="filteredItems"
@@ -57,7 +56,7 @@
     </v-card>
 
      <!-- Form Create, Update -->
-     <v-dialog v-model="dialogFrom" persistent max-width="700px">
+     <v-dialog v-model="dialogForm" persistent max-width="700px">
       <LoaderData v-if="loaderEdit && catTitle == 0"/>
         <v-form v-else ref="form" validate-on="submit lazy" @submit.prevent="saveDrugs">
             <v-card>
@@ -75,7 +74,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>Drug_Code</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_Code"
+                            v-model="dataForm.Drug_Code"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="Drug_Code"
                             dense
@@ -89,7 +88,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>Drug_EnglishName</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_EnglishName"
+                            v-model="dataForm.Drug_EnglishName"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="Drug_EnglishName"
                             dense
@@ -103,7 +102,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>Drug_ThaiName</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_ThaiName"
+                            v-model="dataForm.Drug_ThaiName"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="Drug_ThaiName"
                             dense
@@ -117,7 +116,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">Drug_GenericName</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_GenericName"
+                            v-model="dataForm.Drug_GenericName"
                             label="Drug_GenericName"
                             dense
                             outlined
@@ -130,7 +129,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">Drug_TradeName</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_TradeName"
+                            v-model="dataForm.Drug_TradeName"
                             label="Drug_TradeName"
                             dense
                             outlined
@@ -143,7 +142,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>Drug_Catagory</p>
                         <v-text-field
-                            v-model="dataFrom.Drug_Catagory"
+                            v-model="dataForm.Drug_Catagory"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="Drug_Catagory"
                             dense
@@ -157,7 +156,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>TPU_Code</p>
                         <v-text-field
-                            v-model="dataFrom.TPU_Code"
+                            v-model="dataForm.TPU_Code"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="TPU_Code"
                             dense
@@ -171,7 +170,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">GPU_Code</p>
                         <v-text-field
-                            v-model="dataFrom.GPU_Code"
+                            v-model="dataForm.GPU_Code"
                             label="GPU_Code"
                             dense
                             outlined
@@ -184,7 +183,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">Claim_Desc</p>
                         <v-text-field
-                            v-model="dataFrom.Claim_Desc"
+                            v-model="dataForm.Claim_Desc"
                             label="Claim_Desc"
                             dense
                             outlined
@@ -197,7 +196,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label"><span>*</span>Group_Bill</p>
                         <v-text-field
-                            v-model="dataFrom.Group_Bill"
+                            v-model="dataForm.Group_Bill"
                             :rules="[v => !!v || 'กรุณากรอกข้อมูล']"
                             label="Group_Bill"
                             dense
@@ -211,7 +210,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">SIMB</p>
                         <v-text-field
-                            v-model="dataFrom.SIMB"
+                            v-model="dataForm.SIMB"
                             label="SIMB"
                             dense
                             outlined
@@ -224,7 +223,7 @@
                     <v-col cols="12" md="6" class="py-0">
                         <p class="style-label">ClaimCat</p>
                         <v-text-field
-                            v-model="dataFrom.ClaimCat"
+                            v-model="dataForm.ClaimCat"
                             label="ClaimCat"
                             dense
                             outlined
@@ -248,6 +247,7 @@
         </v-form>
       </v-dialog>
 
+      <!-- Form DrugsPrice -->
       <v-dialog v-model="showDrugsPrice" persistent max-width="700px">
         <LoaderData  v-if="loaderCheckPrice"/>
           
@@ -288,8 +288,9 @@
 <script>
   import DatePicker from '@/components/DatePicker.vue';
   import LoaderData from '@/components/LoaderData.vue';
+  import * as XLSX from 'xlsx';
   import moment from 'moment';
-  import 'moment/locale/th'; // Import the Thai locale
+  import 'moment/locale/th';
   export default {
     components: {DatePicker, LoaderData},
     data : () => ({
@@ -300,7 +301,6 @@
       getEndDate: null,
       checkPage : true,
       showDrugsPrice: false,
-      dataFrom: {},
       Drug_Code: {},
       datasDrugPrice: [],
       headers: [
@@ -332,18 +332,28 @@
     },
 
     computed: {
-
       filteredItems() {
+        const searchQuery = this.search.toLowerCase();
         return this.dataDurgList.filter(item => {
           const itemDate = item.Create_Date;
           const startDate = this.getStartDate;
           const endDate = this.getEndDate;
+          const searchMatch = (
+          item.Drug_Code.toLowerCase().includes(searchQuery) || // Example for Drug_Code
+          item.Drug_Catagory.toLowerCase().includes(searchQuery) // Example for another field
+        );
           return (
+            searchMatch &&
             (startDate === null || itemDate >= startDate) &&
             (endDate === null || itemDate <= endDate)
           );
         });
       },
+
+      dialogTitle () {
+            // return this.catTitle === -1 ? 'สร้าง' : 'แก้ไข'
+            return this.catTitle === -1 ? 'สร้าง' : 'รายละเอียดยา'
+        },
 
     },
 
@@ -358,17 +368,25 @@
       },
 
       clearDrugsPrice(){
-        
         this.loaderCheckPrice   = true
         this.showDrugsPrice     = false
       },
 
+      exportToExcel() {
+          const fileName = 'Drug.xlsx'
+          const wb = XLSX.utils.book_new();
+          const ws = XLSX.utils.json_to_sheet(this.filteredItems);
+          XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+          /* generate XLSX file and send to client */
+          XLSX.writeFile(wb, fileName);
+      },
+
       async dialogUpadateDrugs(value){
         this.catTitle           = await 0
-        this.dialogFrom        = await true
+        this.dialogForm        = await true
         setTimeout(() => {
           this.loaderEdit       = false;
-          this.dataFrom         = JSON.parse(JSON.stringify(value));
+          this.dataForm         = JSON.parse(JSON.stringify(value));
         }, 500);
       },
 
@@ -409,25 +427,25 @@
             if(this.catTitle === -1){
               // create
               fd = {
-                "drug_Code"           : this.dataFrom.Drug_Code,
-                "drug_EnglishName"    : this.dataFrom.Drug_EnglishName,
-                "drug_ThaiName"       : this.dataFrom.Drug_ThaiName,
-                "drug_GenericName"    : this.dataFrom.Drug_GenericName,
-                "drug_TradeName"      : this.dataFrom.Drug_TradeName,
-                "drug_Catagory"       : this.dataFrom.Drug_Catagory,
-                "tpU_Code"            : this.dataFrom.TPU_Code,
-                "gpU_Code"            : this.dataFrom.GPU_Code,
-                "claim_Desc"          : this.dataFrom.Claim_Desc,
-                "group_Bill"          : this.dataFrom.Group_Bill,
-                "simb"                : this.dataFrom.SIMB,
-                "claimCat"            : this.dataFrom.ClaimCat,
+                "drug_Code"           : this.dataForm.Drug_Code,
+                "drug_EnglishName"    : this.dataForm.Drug_EnglishName,
+                "drug_ThaiName"       : this.dataForm.Drug_ThaiName,
+                "drug_GenericName"    : this.dataForm.Drug_GenericName,
+                "drug_TradeName"      : this.dataForm.Drug_TradeName,
+                "drug_Catagory"       : this.dataForm.Drug_Catagory,
+                "tpU_Code"            : this.dataForm.TPU_Code,
+                "gpU_Code"            : this.dataForm.GPU_Code,
+                "claim_Desc"          : this.dataForm.Claim_Desc,
+                "group_Bill"          : this.dataForm.Group_Bill,
+                "simb"                : this.dataForm.SIMB,
+                "claimCat"            : this.dataForm.ClaimCat,
                 "create_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
-                "create_By"           : this.dataFrom.create_By,
+                "create_By"           : this.dataForm.create_By,
                 "cxl_Date"            : moment().format('YYYY-MM-DD HH:mm:ss'),
-                "cxl_By"              : this.dataFrom.cxl_By,
+                "cxl_By"              : this.dataForm.cxl_By,
                 "update_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
-                "update_By"           : this.dataFrom.update_By,
-                "stockInactiveCode"   : this.dataFrom.stockInactiveCode,
+                "update_By"           : this.dataForm.update_By,
+                "stockInactiveCode"   : this.dataForm.stockInactiveCode,
               }
               drugPath = await `/api/InterfaceBrowser/CreateDrugMaster`
             }else{
@@ -435,23 +453,23 @@
               this.alertEdit()
               this.clear()
               // fd = {
-              //   "drug_Code"           : this.dataFrom.Drug_Code,
-              //   "drug_EnglishName"    : this.dataFrom.Drug_EnglishName,
-              //   "drug_ThaiName"       : this.dataFrom.Drug_ThaiName,
-              //   "drug_GenericName"    : this.dataFrom.Drug_GenericName,
-              //   "drug_TradeName"      : this.dataFrom.Drug_TradeName,
-              //   "drug_Catagory"       : this.dataFrom.Drug_Catagory,
-              //   "tpU_Code"            : this.dataFrom.TPU_Code,
-              //   "gpU_Code"            : this.dataFrom.GPU_Code,
-              //   "claim_Desc"          : this.dataFrom.Claim_Desc,
-              //   "group_Bill"          : this.dataFrom.Group_Bill,
-              //   "simb"                : this.dataFrom.SIMB,
-              //   "claimCat"            : this.dataFrom.ClaimCat,
+              //   "drug_Code"           : this.dataForm.Drug_Code,
+              //   "drug_EnglishName"    : this.dataForm.Drug_EnglishName,
+              //   "drug_ThaiName"       : this.dataForm.Drug_ThaiName,
+              //   "drug_GenericName"    : this.dataForm.Drug_GenericName,
+              //   "drug_TradeName"      : this.dataForm.Drug_TradeName,
+              //   "drug_Catagory"       : this.dataForm.Drug_Catagory,
+              //   "tpU_Code"            : this.dataForm.TPU_Code,
+              //   "gpU_Code"            : this.dataForm.GPU_Code,
+              //   "claim_Desc"          : this.dataForm.Claim_Desc,
+              //   "group_Bill"          : this.dataForm.Group_Bill,
+              //   "simb"                : this.dataForm.SIMB,
+              //   "claimCat"            : this.dataForm.ClaimCat,
               //   "cxl_Date"            : moment().format('YYYY-MM-DD HH:mm:ss'),
-              //   "cxl_By"              : this.dataFrom.cxl_By,
+              //   "cxl_By"              : this.dataForm.cxl_By,
               //   "update_Date"         : moment().format('YYYY-MM-DD HH:mm:ss'),
-              //   "update_By"           : this.dataFrom.update_By,
-              //   "stockInactiveCode"   : this.dataFrom.stockInactiveCode,
+              //   "update_By"           : this.dataForm.update_By,
+              //   "stockInactiveCode"   : this.dataForm.stockInactiveCode,
               // }
             }
 

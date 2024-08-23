@@ -8,7 +8,7 @@ import LayoutView from "../views/LayoutView.vue"
 import PageNotFound from "../views/NotFound.vue"
 
 import DrugAll from "../views/drug/DrugAll.vue"
-import DrugById from "../views/drug/drugDetail/DrugById.vue"
+import DrugNotify from "../views/drug/DrugNotify.vue"
 import MedicineRules from "../views/medicine/MedicineRules.vue"
 import ReceiveRules from "../views/receive/ReceiveRules.vue"
 
@@ -32,11 +32,13 @@ const router = new VueRouter({
           name: "drug-all",
           component: DrugAll
         },
+        
         {
-          path: "drug/:id",
-          name: "drug-detail",
-          component: DrugById
+          path: 'drug-notify',
+          name: "drug-notify",
+          component: DrugNotify
         },
+        
         
         {
           path: "medicine",
