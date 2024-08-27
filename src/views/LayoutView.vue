@@ -2,7 +2,6 @@
     <v-app id="app">
       <v-navigation-drawer class="sidebar" v-model="drawer" app>
         <v-list-item >
-          <!-- <v-list-item-content class="head-menuhome"> -->
             <div>
               <a href="/" class="navbar-left">
                 <v-img :aspect-ratio="1" src="../assets/drug _master.png"> </v-img>
@@ -10,8 +9,6 @@
               </a>
            
             </div>
-         
-          <!-- </v-list-item-content> -->
         </v-list-item>
 
         <v-list class="mt-5" dense nav>  
@@ -64,11 +61,7 @@
             </v-list-item>
           </router-link> -->
 
-
-  
         </v-list>
-
-  
       </v-navigation-drawer>
         <v-app-bar app class="navbar">
           <div class="style-navbar">

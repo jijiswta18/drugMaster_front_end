@@ -29,8 +29,8 @@
         <v-tabs v-model="tab">
             <v-tab v-for="(item, index) in items" :key="index" @click="getReceiveRules(index)">{{ item }}</v-tab>
             <v-tab-item v-for="(item, index) in items" :key="index">
-                <!-- Table Data -->
                 
+                <!-- Table Data -->
                 <v-card class="style-card">
                     <v-data-table
                         :headers="headers"
@@ -260,6 +260,7 @@
                 console.error('Error fetching data:', error);
             }
         },
+
         async getMedicineRule(){
             try {
                 this.loading = true
@@ -275,6 +276,7 @@
                 console.error('Error fetching data:', error);
             }
         },
+
         async saveReceiveRule(){
 
             if(this.$refs.formReceiveRule.validate()){
@@ -412,26 +414,25 @@
             
             }
         },
+
         dialogUpadateReceiveRule(value){
             console.log(value);
             this.dataForm           = value
             this.dialogReceiveRule  = true
             this.catReceiveRule     = 0
         },
+
         dialogCreateReceiveRule(){
             this.dialogReceiveRule  = true
  
         },
+
         clear(){
             this.dialogReceiveRule              = false
             this.catReceiveRule                 = -1
             this.dataForm = {}
             this.$refs.formReceiveRule.resetValidation()
         },
-
-        
-
-
     }
   };
   </script>
